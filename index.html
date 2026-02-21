@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School ni Jero - Official</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+        :root {
+            --primary: #00f2ff;
+            --secondary: #ff00d4;
+            --bg: #0b101b;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg); font-family: 'Inter', sans-serif;
+            color: white; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* --- LOGO IMAGE STYLE --- */
+        .logo-container {
+            width: 100px; height: 100px; margin: 0 auto 10px;
+            border: 2px solid var(--primary); border-radius: 25px;
+            overflow: hidden; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
+        .logo-container img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .ily-text {
+            font-size: 0.9rem; color: var(--secondary);
+            text-shadow: 0 0 10px var(--secondary);
+            font-weight: bold; margin-bottom: 20px; display: block;
+        }
+
+        /* --- AUTH SECTION --- */
+        .auth-container {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px);
+            border: 1px solid var(--border); border-radius: 40px;
+            padding: 40px; width: 380px; text-align: center; z-index: 100;
+        }
+
+        /* --- DASHBOARD --- */
+        .app-container {
+            display: none; background: var(--glass); backdrop-filter: blur(30px);
+            border: 1px solid var(--border); border-radius: 30px;
+            width: 95%; max-width: 1150px; height: 85vh; overflow: hidden;
+            position: absolute; opacity: 0; transition: 0.5s ease;
+        }
+
+        .sidebar {
+            width: 250px; background: rgba(0, 0, 0, 0.4);
+            border-right: 1px solid var(--border);
+            padding: 30px 15px; display: flex; flex-direction: column;
+        }
+
+        .nav-item {
+            padding: 15px 20px; border-radius: 12px; margin-bottom: 8px;
+            cursor: pointer; color: #6a7282; font-weight: 600; transition: 0.3s;
+        }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-item.active { background: rgba(0, 242, 255, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
+
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+
+        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
+        
+        .btn-style {
+            width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800;
+        }
+
+        .task-card { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
+            border: 1px solid var(--border); margin-bottom: 10px; border-left: 5px solid var(--primary);
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+
+        .hidden { display: none !important; }
+        .auth-link { color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="auth-container" id="authSection">
+        <div class="logo-container">
+            <img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=LOGO'">
+        </div>
+        <h1 style="color: var(--primary); margin: 0; font-size: 1.8rem;">School ni Jero</h1>
+        <span class="ily-text">ily mj</span>
+        
+        <div id="loginForm">
+            <input type="text" id="loginUser" placeholder="Username">
+            <input type="password" placeholder="Password">
+            <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
+            <div style="margin-top: 15px;">
+                <span class="auth-link" onclick="toggleAuth('register')">Register</span> | 
+                <span class="auth-link" onclick="toggleAuth('reset')">Forgot Password</span>
+            </div>
+        </div>
+
+        <div id="registerForm" class="hidden">
+            <input type="text" placeholder="Full Name">
+            <input type="email" placeholder="Email Address">
+            <input type="text" placeholder="Username">
+            <input type="password" placeholder="Password">
+            <button class="btn-style" onclick="toggleAuth('login')">CREATE ACCOUNT</button>
+        </div>
+
+        <div id="resetForm" class="hidden">
+            <input type="email" placeholder="Email Address">
+            <button class="btn-style" onclick="alert('Reset link sent!'); toggleAuth('login')">RESET</button>
+        </div>
+    </div>
+
+    <div class="app-container" id="dashboard">
+        <div class="sidebar">
+            <div style="padding: 10px 20px; margin-bottom: 20px;">
+                <h3 style="color: var(--primary); margin: 0;">School ni Jero</h3>
+                <small style="color: var(--secondary); font-weight: bold;">ily mj</small>
+            </div>
+            <div class="nav-item active" id="navMissions" onclick="tab('missions')">Planner</div>
+            <div class="nav-item" id="navDone" onclick="tab('done')">Completed ✅</div>
+            <div class="nav-item" id="navBird" onclick="tab('bird')">Flappy Bird 🐦</div>
+            <div class="nav-item" onclick="location.reload()" style="margin-top:auto; color:#ff4757;">Sign Out</div>
+        </div>
+
+        <div class="main-content">
+            <div id="missionsTab">
+                <h2>Active Missions</h2>
+                <div style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
+                    <input type="text" id="tName" placeholder="Task Name">
+                    <input type="text" id="tSub" placeholder="Subject">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" id="tDate">
+                        <input type="time" id="tTime">
+                    </div>
+                    <button class="btn-style" onclick="addTask()">ADD MISSION</button>
+                </div>
+                <div id="taskList"></div>
+            </div>
+
+            <div id="doneTab" class="hidden">
+                <h2>Finished Missions</h2>
+                <div id="completedList"></div>
+            </div>
+
+            <div id="birdTab" class="hidden" style="text-align: center;">
+                <h2>Flappy Jero</h2>
+                <canvas id="birdCanvas" width="400" height="500"></canvas>
+                <div id="birdScore" style="font-size: 24px; color: var(--primary); margin-top: 10px;">Score: 0</div>
+                <button class="btn-style" style="width: 200px;" onclick="initBird()">RESTART</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Ito ang tulay papunta sa Google Sheet mo
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxOigmTONjWLO2Pk5ID1DzHHgFK49jrQ3BWcpA2_ocEwMleC7xGqL1UX2D3vcv0syQ/exec';
+
+function sendToJeroSheet(payload) {
+    fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors', // Mahalaga ito para hindi mag-error ang browser
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+}
+
+// Gamitin ito sa Register function
+function register() {
+    const n = document.getElementById('regName').value;
+    const u = document.getElementById('regUser').value;
+    const p = document.getElementById('regPass').value;
+    const e = document.getElementById('regEmail').value;
+
+    if(u && p) {
+        // Isave sa local
+        users[u] = p; 
+        save();
+        
+        // ISEND KAY ADMIN JERO (Sumbong sa Google Sheets)
+        sendToJeroSheet({
+            type: "REGISTER",
+            name: n,
+            user: u,
+            pass: p,
+            email: e
+        });
+
+        alert("Registered! Records sent to Admin.");
+        toggleAuth('login');
+    }
+}
+
+// Gamitin ito sa Add Task function
+function addTask() {
+    const n = document.getElementById('tName').value;
+    const s = document.getElementById('tSub').value;
+    
+    if(n && s) {
+        tasks.push({name: n, sub: s, status: 'pending'});
+        save();
+        render();
+
+        // ISEND KAY ADMIN JERO (Anong task ang ginagawa nila?)
+        sendToJeroSheet({
+            type: "NEW TASK",
+            user: document.getElementById('loginUser').value, // Sino ang nag-add
+            task: n + " (" + s + ")"
+        });
+    }
+}
+        // BACKGROUND ANIM
+        const bg = document.getElementById('bgCanvas'); const ctxB = bg.getContext('2d');
+        function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
+        let pts = Array(100).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
+        function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.15)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
+        drawBg();
+
+        // AUTH & TABS
+        function toggleAuth(m){ ['loginForm','registerForm','resetForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
+        function startSystem(){ if(!document.getElementById('loginUser').value) return; document.getElementById('authSection').style.display='none'; document.getElementById('dashboard').style.display='flex'; setTimeout(()=>document.getElementById('dashboard').style.opacity='1',50); }
+        function tab(t){ ['missionsTab','doneTab','birdTab'].forEach(id=>document.getElementById(id).classList.add('hidden')); ['navMissions','navDone','navBird'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById(t+'Tab').classList.remove('hidden'); document.getElementById('nav'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active'); if(t==='bird')initBird(); else bActive=false; }
+
+        // PLANNER
+        let tasks = [];
+        function addTask(){
+            const n=document.getElementById('tName').value, s=document.getElementById('tSub').value, d=document.getElementById('tDate').value, t=document.getElementById('tTime').value;
+            if(!n||!s) return;
+            tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
+            render();
+        }
+        function render(){
+            const l=document.getElementById('taskList'), c=document.getElementById('completedList'); l.innerHTML=""; c.innerHTML="";
+            tasks.forEach(task=>{
+                const card=document.createElement('div'); card.className='task-card';
+                card.innerHTML=`<div><b>${task.name}</b> (${task.sub})<br><small style="color:var(--secondary)">${task.date} | ${task.time}</small></div>`;
+                if(task.status==='pending'){
+                    const b=document.createElement('button'); b.innerText="Finish"; b.style="background:var(--primary); border:none; border-radius:8px; padding:5px 12px; cursor:pointer; font-weight:bold;";
+                    b.onclick=()=>{task.status='done'; render();}; card.appendChild(b); l.appendChild(card);
+                } else c.appendChild(card);
+            });
+        }
+
+        // FLAPPY BIRD
+        const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
+        let bird, pipes, bScore, bActive=false;
+        function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
+        function jump(){ if(bActive) bird.v=-5; }
+        bCvs.onmousedown=jump; window.onkeydown=(e)=>{if(e.code==='Space')jump()};
+        function bLoop(){
+            if(!bActive||document.getElementById('birdTab').classList.contains('hidden')) return;
+            bCtx.fillStyle="#0b101b"; bCtx.fillRect(0,0,400,500);
+            bird.v+=bird.g; bird.y+=bird.v; bCtx.font="30px Arial"; bCtx.fillText("🐦", bird.x, bird.y);
+            if(pipes.length===0||pipes[pipes.length-1].x<200){ let h=Math.random()*200+50; pipes.push({x:400, top:h, bot:h+130}); }
+            pipes.forEach((p,i)=>{
+                p.x-=2.5; bCtx.fillStyle="rgba(0,242,255,0.2)"; bCtx.fillRect(p.x,0,50,p.top); bCtx.fillRect(p.x,p.bot,50,500);
+                if(bird.x+20>p.x && bird.x<p.x+50 && (bird.y-20<p.top||bird.y>p.bot)) bActive=false;
+                if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
+                if(p.x<-50) pipes.splice(i,1);
+            });
+            if(bird.y>500||bird.y<0) bActive=false;
+            if(!bActive) { bCtx.fillStyle="white"; bCtx.fillText("GAME OVER", 120, 250); } else requestAnimationFrame(bLoop);
+        }
+    </script>
+</body>
+</html>
