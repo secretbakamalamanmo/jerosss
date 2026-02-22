@@ -144,16 +144,17 @@
     </div>
 
     <script>
-        // ILAGAY DITO ANG PINAKABAGONG URL MULA SA APPS SCRIPT
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxFedlSkKyFbcpzEaoKOhJYTPmawmBywzs2CXmbtwicmjKeMQzvQlq08_F6i0mGKnag/exec';
+        // --- 1. CONFIGURATION ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwkqSeaCCNCxvhiccDh7EPYQcIKRj3_OSWCsJ7DaMY__DpcyKiZO0LjXTjdynfThZn_/exec'; // Palitan mo ito
 
-        // LOGIN SYSTEM WITH VALIDATION
+        // --- 2. AUTHENTICATION (LOGIN & REGISTER) ---
         function startSystem() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
 
-            if (!u || !p) return alert("Pakilagay ang username at password!");
+            if (!u || !p) return alert("Paki-fill up ang login details!");
 
+            // NO-CORS REMOVED: Para makakuha ng sagot mula sa Apps Script
             fetch(scriptURL, {
                 method: 'POST',
                 body: JSON.stringify({ type: "LOGIN", user: u, pass: p })
@@ -168,10 +169,12 @@
                     alert("Maling Username o Password!");
                 }
             })
-            .catch(error => alert("Error: Siguraduhing tama ang scriptURL at may storage pa ang Google Drive mo."));
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert("Connection Error. Siguraduhing tama ang URL at naka-set sa 'Anyone' ang access.");
+            });
         }
 
-        // REGISTRATION SYSTEM
         function register() {
             const n = document.getElementById('regName').value;
             const e = document.getElementById('regEmail').value;
@@ -188,28 +191,26 @@
                 alert("Account Created! Pwede ka na mag-login.");
                 toggleAuth('login');
             })
-            .catch(err => alert("Registration failed. Check your connection."));
+            .catch(err => alert("Registration failed. Check your Apps Script."));
         }
 
-        // BACKGROUND ANIM
+        // --- 3. UI LOGIC (TABS & ANIMATION) ---
         const bg = document.getElementById('bgCanvas'); const ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
         let pts = Array(100).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
         function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.15)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
         drawBg();
 
-        // TABS & UI
         function toggleAuth(m){ ['loginForm','registerForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
         function tab(t){ ['missionsTab','doneTab','birdTab'].forEach(id=>document.getElementById(id).classList.add('hidden')); ['navMissions','navDone','navBird'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById(t+'Tab').classList.remove('hidden'); document.getElementById('nav'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active'); if(t==='bird')initBird(); else bActive=false; }
 
-        // PLANNER
+        // --- 4. PLANNER & MINI-GAME ---
         let tasks = [];
         function addTask(){
             const n=document.getElementById('tName').value, s=document.getElementById('tSub').value, d=document.getElementById('tDate').value, t=document.getElementById('tTime').value;
             if(!n||!s) return;
             tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
             render();
-            // Optional: Send task to sheet
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: document.getElementById('loginUser').value, task: n }) });
         }
         function render(){
@@ -224,7 +225,6 @@
             });
         }
 
-        // FLAPPY BIRD (MINI GAME)
         const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
         let bird, pipes, bScore, bActive=false;
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
