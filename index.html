@@ -13,6 +13,7 @@
             --bg: #0b101b;
             --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
+            --error: #ff4757;
         }
 
         body, html {
@@ -35,6 +36,18 @@
         .logo-container img { width: 100%; height: 100%; object-fit: cover; }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Shake Animation for empty fields */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .shake-error {
+            animation: shake 0.3s ease-in-out;
+            border: 1.5px solid var(--error) !important;
+        }
 
         .ily-text {
             font-size: 0.9rem; color: var(--secondary);
@@ -61,7 +74,7 @@
         .nav-item.active { background: rgba(0, 242, 255, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; transition: 0.2s; }
         
         .btn-style { width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800; }
 
@@ -145,19 +158,26 @@
 
     <script>
         // --- 1. CONFIGURATION ---
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyqUbIb4mOq8LNduepcX39goDAc0dpo4SKm1D3TPJiMwUEwZd96zfZegMsyCwUYag4D/exec'; // Palitan mo ito
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyqUbIb4mOq8LNduepcX39goDAc0dpo4SKm1D3TPJiMwUEwZd96zfZegMsyCwUYag4D/exec'; 
 
         // --- 2. AUTHENTICATION (LOGIN & REGISTER) ---
         function startSystem() {
-            const u = document.getElementById('loginUser').value;
-            const p = document.getElementById('loginPass').value;
+            const uField = document.getElementById('loginUser');
+            const pField = document.getElementById('loginPass');
+            let hasError = false;
 
-            if (!u || !p) return alert("Paki-fill up ang login details!");
+            // Reset shake
+            uField.classList.remove('shake-error');
+            pField.classList.remove('shake-error');
 
-            // NO-CORS REMOVED: Para makakuha ng sagot mula sa Apps Script
+            // Validation with Shake Effect
+            if (!uField.value) { uField.classList.add('shake-error'); hasError = true; }
+            if (!pField.value) { pField.classList.add('shake-error'); hasError = true; }
+            if (hasError) return;
+
             fetch(scriptURL, {
                 method: 'POST',
-                body: JSON.stringify({ type: "LOGIN", user: u, pass: p })
+                body: JSON.stringify({ type: "LOGIN", user: uField.value, pass: pField.value })
             })
             .then(res => res.json())
             .then(data => {
@@ -166,32 +186,49 @@
                     document.getElementById('dashboard').style.display = 'flex';
                     setTimeout(() => document.getElementById('dashboard').style.opacity = '1', 50);
                 } else {
-                    alert("Maling Username o Password!");
+                    // English alert and shake
+                    alert("Invalid Username or Password!");
+                    uField.classList.add('shake-error');
+                    pField.classList.add('shake-error');
                 }
             })
             .catch(error => {
                 console.error('Error!', error.message);
-                alert("Connection Error. Siguraduhing tama ang URL at naka-set sa 'Anyone' ang access.");
+                alert("Connection Error. Please check your script deployment or internet.");
             });
         }
 
         function register() {
-            const n = document.getElementById('regName').value;
-            const e = document.getElementById('regEmail').value;
-            const u = document.getElementById('regUser').value;
-            const p = document.getElementById('regPass').value;
+            const fields = ['regName', 'regEmail', 'regUser', 'regPass'];
+            let hasError = false;
+            let data = { type: "REGISTER" };
 
-            if (!n || !u || !p) return alert("Paki-fill up lahat ng fields!");
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('shake-error');
+                if (!el.value) {
+                    el.classList.add('shake-error');
+                    hasError = true;
+                }
+            });
+
+            if (hasError) return;
 
             fetch(scriptURL, {
                 method: 'POST',
-                body: JSON.stringify({ type: "REGISTER", name: n, email: e, user: u, pass: p })
+                body: JSON.stringify({ 
+                    type: "REGISTER", 
+                    name: document.getElementById('regName').value, 
+                    email: document.getElementById('regEmail').value, 
+                    user: document.getElementById('regUser').value, 
+                    pass: document.getElementById('regPass').value 
+                })
             })
             .then(() => {
-                alert("Account Created! Pwede ka na mag-login.");
+                alert("Account Successfully Created! You can now login.");
                 toggleAuth('login');
             })
-            .catch(err => alert("Registration failed. Check your Apps Script."));
+            .catch(err => alert("Registration failed. Please try again."));
         }
 
         // --- 3. UI LOGIC (TABS & ANIMATION) ---
@@ -247,4 +284,3 @@
     </script>
 </body>
 </html>
-
