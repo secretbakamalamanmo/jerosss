@@ -2,186 +2,198 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School ni Jero - Official</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jero App Mobile</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        :root { --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); --error: #ff4757; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        :root { --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
+        
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .logo-container { width: 100px; height: 100px; margin: 0 auto 10px; border: 2px solid var(--primary); border-radius: 25px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; animation: float 3s ease-in-out infinite; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
-        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        .shake-error { animation: shake 0.3s ease-in-out; border: 1.5px solid var(--error) !important; }
-        .ily-text { font-size: 0.9rem; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); font-weight: bold; margin-bottom: 20px; display: block; }
-        .auth-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 40px; padding: 40px; width: 380px; text-align: center; z-index: 100; }
-        .app-container { display: none; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: 30px; width: 95%; max-width: 1150px; height: 85vh; overflow: hidden; position: absolute; opacity: 0; transition: 0.5s ease; }
-        .sidebar { width: 250px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid var(--border); padding: 30px 15px; display: flex; flex-direction: column; }
-        .nav-item { padding: 15px 20px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #6a7282; font-weight: 600; transition: 0.3s; }
-        .nav-item.active { background: rgba(0, 242, 255, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
-        .btn-style { width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800; }
-        .task-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+
+        /* Login Screen */
+        .auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 20px; transition: 0.5s; }
+        .auth-card { background: var(--glass); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; border: 1px solid var(--border); width: 100%; max-width: 350px; text-align: center; }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(11, 16, 27, 0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--border); display: none; justify-content: space-around; align-items: center; z-index: 900; padding-bottom: 10px; }
+        .nav-btn { color: #6a7282; font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; border: none; background: none; transition: 0.3s; }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn i { font-size: 1.5rem; margin-bottom: 4px; }
+
+        /* Main Sections */
+        .content-area { flex: 1; height: 100%; overflow-y: auto; padding: 25px; padding-bottom: 100px; display: none; }
+        .section-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 15px; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Mobile Inputs & Buttons */
+        input { width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; color: white; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+        .btn-main { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border: none; border-radius: 15px; color: white; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2); }
+        
+        .card { background: var(--glass); border: 1px solid var(--border); padding: 20px; border-radius: 20px; margin-bottom: 15px; }
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        
+        /* Game Styles */
+        #birdCanvas { width: 100%; border-radius: 20px; background: #000; touch-action: none; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .hidden { display: none !important; }
-        .auth-link { color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: inline-block; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .shake { animation: shake 0.3s; border-color: #ff4757 !important; }
     </style>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
-    <div class="auth-container" id="authSection">
-        <div class="logo-container"><img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=LOGO'"></div>
-        <h1 style="color: var(--primary); margin: 0; font-size: 1.8rem;">School ni Jero</h1>
-        <span class="ily-text">ily mj</span>
-        <div id="loginForm">
-            <input type="text" id="loginUser" placeholder="Username">
-            <input type="password" id="loginPass" placeholder="Password">
-            <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
-            <div style="margin-top: 15px;"><span class="auth-link" onclick="toggleAuth('register')">Register</span></div>
-        </div>
-        <div id="registerForm" class="hidden">
-            <input type="text" id="regName" placeholder="Full Name">
-            <input type="email" id="regEmail" placeholder="Email Address">
-            <input type="text" id="regUser" placeholder="Username">
-            <input type="password" id="regPass" placeholder="Password">
-            <button class="btn-style" onclick="register()">CREATE ACCOUNT</button>
-            <div style="margin-top: 15px;"><span class="auth-link" onclick="toggleAuth('login')">Back to Login</span></div>
+
+    <div id="authScreen" class="auth-overlay">
+        <div class="auth-card">
+            <h1 style="margin:0; color:var(--primary); font-size: 2rem;">Jero Mobile</h1>
+            <p style="color:var(--secondary); font-weight:bold; margin-bottom:25px;">ily mj</p>
+            
+            <div id="loginForm">
+                <input type="text" id="user" placeholder="Username">
+                <input type="password" id="pass" placeholder="Password">
+                <button class="btn-main" onclick="handleLogin()">LOGIN APP</button>
+                <p style="font-size:0.85rem; margin-top:20px" onclick="toggleAuth()">New here? <span style="color:var(--primary)">Register</span></p>
+            </div>
+
+            <div id="regForm" class="hidden">
+                <input type="text" id="regU" placeholder="New Username">
+                <input type="password" id="regP" placeholder="New Password">
+                <button class="btn-main" onclick="handleReg()">CREATE ACCOUNT</button>
+                <p style="font-size:0.85rem; margin-top:20px" onclick="toggleAuth()">Go back to <span style="color:var(--primary)">Login</span></p>
+            </div>
         </div>
     </div>
 
-    <div class="app-container" id="dashboard">
-        <div class="sidebar">
-            <div style="padding: 10px 20px; margin-bottom: 20px;">
-                <h3 style="color: var(--primary); margin: 0;">School ni Jero</h3>
-                <small style="color: var(--secondary); font-weight: bold;">ily mj</small>
-            </div>
-            <div class="nav-item active" id="navMissions" onclick="tab('missions')">Planner</div>
-            <div class="nav-item" id="navDone" onclick="tab('done')">Completed ✅</div>
-            <div class="nav-item" id="navBird" onclick="tab('bird')">Flappy Bird 🐦</div>
-            <div class="nav-item" onclick="location.reload()" style="margin-top:auto; color:var(--error);">Sign Out</div>
+    <div id="plannerSec" class="content-area">
+        <div class="section-title">Planner</div>
+        <div class="card">
+            <input type="text" id="taskName" placeholder="Mission Name...">
+            <button class="btn-main" onclick="addTask()">ADD TO SHEET</button>
         </div>
-        <div class="main-content">
-            <div id="missionsTab">
-                <h2>Active Missions</h2>
-                <div style="background: var(--glass); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
-                    <input type="text" id="tName" placeholder="Task Name">
-                    <input type="text" id="tSub" placeholder="Subject">
-                    <div style="display: flex; gap: 10px;">
-                        <input type="date" id="tDate">
-                        <input type="time" id="tTime">
-                    </div>
-                    <button class="btn-style" onclick="addTask()">ADD MISSION</button>
-                </div>
-                <div id="taskList"></div>
-            </div>
-            <div id="doneTab" class="hidden"><h2>Finished Missions</h2><div id="completedList"></div></div>
-            <div id="birdTab" class="hidden" style="text-align: center;">
-                <h2>Flappy Jero</h2>
-                <canvas id="birdCanvas" width="400" height="500"></canvas>
-                <div id="birdScore" style="font-size: 24px; color: var(--primary); margin-top: 10px;">Score: 0</div>
-                <button class="btn-style" style="width: 200px;" onclick="initBird()">RESTART</button>
-            </div>
+        <div id="taskList"></div>
+    </div>
+
+    <div id="gameSec" class="content-area">
+        <div class="section-title">Flappy Jero</div>
+        <div style="position: relative;">
+            <canvas id="birdCanvas" width="320" height="480"></canvas>
+            <div id="scoreLabel" style="position: absolute; top: 20px; left: 20px; font-size: 24px; font-weight: 900; color: var(--primary);">Score: 0</div>
         </div>
+        <button class="btn-main" style="margin-top: 15px;" onclick="initBird()">TAP TO START / RESTART</button>
+    </div>
+
+    <div id="bottomNav" class="bottom-nav">
+        <div class="nav-btn active" onclick="showTab('planner')"><i>📋</i>Planner</div>
+        <div class="nav-btn" onclick="showTab('game')"><i>🎮</i>Game</div>
+        <div class="nav-btn" onclick="location.reload()" style="color:#ff4757"><i>🚪</i>Exit</div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxI87lZoq8l4O5VDG0mG7D08UX4BDZtd5E8zHGe0BMCyE-N4XdX1d9RFqfgqenjjr_2/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyDVCuoE5uOFiHUITez_7B0jQDNHBvW7jbC4rr12C66Yb1qvOhPkos3PF4HLtWRv_Ti/exec';
 
-        function startSystem() {
-            const u = document.getElementById('loginUser'), p = document.getElementById('loginPass');
-            u.classList.remove('shake-error'); p.classList.remove('shake-error');
-            if (!u.value || !p.value) { if(!u.value) u.classList.add('shake-error'); if(!p.value) p.classList.add('shake-error'); return; }
-            
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u.value, pass: p.value }) })
+        // Navigation
+        function showTab(tab) {
+            document.querySelectorAll('.content-area').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab + 'Sec').style.display = 'block';
+            event.currentTarget.classList.add('active');
+            if(tab === 'game') initBird(); else bActive = false;
+        }
+
+        function toggleAuth() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('regForm').classList.toggle('hidden');
+        }
+
+        // Login
+        function handleLogin() {
+            const u = document.getElementById('user').value, p = document.getElementById('pass').value;
+            if(!u || !p) return;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u, pass: p }) })
             .then(res => res.json()).then(data => {
-                if (data.result === "success") {
-                    document.getElementById('authSection').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'flex';
-                    setTimeout(() => document.getElementById('dashboard').style.opacity = '1', 50);
-                } else { alert("Invalid Username or Password!"); u.classList.add('shake-error'); p.classList.add('shake-error'); }
-            }).catch(() => alert("Connection Error!"));
-        }
-
-        function register() {
-            const fields = ['regName', 'regEmail', 'regUser', 'regPass'];
-            let err = false;
-            fields.forEach(id => {
-                let f = document.getElementById(id); f.classList.remove('shake-error');
-                if(!f.value) { f.classList.add('shake-error'); err = true; }
+                if(data.result === "success") {
+                    document.getElementById('authScreen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('authScreen').style.display = 'none';
+                        document.getElementById('bottomNav').style.display = 'flex';
+                        showTab('planner');
+                    }, 500);
+                } else alert("Mali ang login!");
             });
-            if(err) return;
-
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    type: "REGISTER", name: document.getElementById('regName').value, 
-                    email: document.getElementById('regEmail').value, user: document.getElementById('regUser').value, 
-                    pass: document.getElementById('regPass').value 
-                })
-            }).then(() => { alert("Account Created! You can now login."); toggleAuth('login'); });
         }
 
+        // Add Task to Sheet
         function addTask() {
-            const n = document.getElementById('tName').value, s = document.getElementById('tSub').value, 
-                  d = document.getElementById('tDate').value, t = document.getElementById('tTime').value,
-                  u = document.getElementById('loginUser').value;
-            if(!n || !s) return;
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: u, task: n + " (" + s + ")" }) });
-            tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
-            render();
+            const task = document.getElementById('taskName').value, user = document.getElementById('user').value;
+            if(!task) return;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: user, task: task }) });
+            
+            const div = document.createElement('div');
+            div.className = 'task-item';
+            div.innerHTML = `<span>${task}</span><small>Sent!</small>`;
+            document.getElementById('taskList').prepend(div);
+            document.getElementById('taskName').value = "";
+        }
+
+        // Game Logic (Mobile Touch Ready)
+        const canvas = document.getElementById('birdCanvas'), ctx = canvas.getContext('2d');
+        let bird, pipes, bScore, bActive = false;
+
+        function initBird() {
+            bird = { x: 50, y: 150, v: 0, g: 0.25 };
+            pipes = []; bScore = 0; bActive = true;
+            document.getElementById('scoreLabel').innerText = "Score: 0";
+            updateGame();
         }
 
         function saveScore(s) {
-            const u = document.getElementById('loginUser').value;
+            const u = document.getElementById('user').value;
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "SCORE", user: u, score: s }) });
         }
 
-        function render() {
-            const l = document.getElementById('taskList'), c = document.getElementById('completedList');
-            l.innerHTML = ""; c.innerHTML = "";
-            tasks.forEach(task => {
-                const card = document.createElement('div'); card.className = 'task-card';
-                card.innerHTML = `<div><b>${task.name}</b> (${task.sub})<br><small>${task.date} | ${task.time}</small></div>`;
-                if(task.status === 'pending') {
-                    const b = document.createElement('button'); b.innerText = "Finish";
-                    b.style = "background:var(--primary); border:none; border-radius:8px; padding:5px 12px; cursor:pointer; font-weight:bold;";
-                    b.onclick = () => { task.status = 'done'; render(); };
-                    card.appendChild(b); l.appendChild(card);
-                } else c.appendChild(card);
-            });
-        }
+        function updateGame() {
+            if(!bActive) return;
+            ctx.fillStyle = "#0b101b"; ctx.fillRect(0, 0, 320, 480);
+            
+            bird.v += bird.g; bird.y += bird.v;
+            ctx.font = "30px Arial"; ctx.fillText("🐦", bird.x, bird.y);
 
-        function toggleAuth(m){ ['loginForm','registerForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
-        function tab(t){ ['missionsTab','doneTab','birdTab'].forEach(id=>document.getElementById(id).classList.add('hidden')); ['navMissions','navDone','navBird'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById(t+'Tab').classList.remove('hidden'); document.getElementById('nav'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active'); if(t==='bird')initBird(); else bActive=false; }
+            if(pipes.length === 0 || pipes[pipes.length - 1].x < 150) {
+                let gap = 120, top = Math.random() * (canvas.height - gap - 100) + 50;
+                pipes.push({ x: 320, t: top, b: top + gap });
+            }
 
-        // BG Animation
-        const bg = document.getElementById('bgCanvas'); const ctxB = bg.getContext('2d');
-        function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
-        let pts = Array(100).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
-        function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.15)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
-        drawBg();
+            pipes.forEach((p, i) => {
+                p.x -= 2;
+                ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
+                ctx.fillRect(p.x, 0, 40, p.t);
+                ctx.fillRect(p.x, p.b, 40, 480);
 
-        // Bird Game Logic
-        const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
-        let bird, pipes, bScore, bActive=false, tasks = [];
-        function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
-        function bLoop(){
-            if(!bActive || document.getElementById('birdTab').classList.contains('hidden')) return;
-            bCtx.fillStyle="#0b101b"; bCtx.fillRect(0,0,400,500);
-            bird.v+=bird.g; bird.y+=bird.v; bCtx.font="30px Arial"; bCtx.fillText("🐦", bird.x, bird.y);
-            if(pipes.length===0||pipes[pipes.length-1].x<200) pipes.push({x:400, top:Math.random()*200+50});
-            pipes.forEach((p,i)=>{
-                p.x-=2.5; bCtx.fillStyle="rgba(0,242,255,0.2)"; bCtx.fillRect(p.x,0,50,p.top); bCtx.fillRect(p.x,p.top+130,50,500);
-                if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
-                if(bird.y>500||bird.y<0||(bird.x+20>p.x && bird.x<p.x+50 && (bird.y<p.top||bird.y>p.top+110))) {
-                    bActive=false; saveScore(bScore); alert("Game Over! Score: " + bScore);
+                if(p.x === 50) { bScore++; document.getElementById('scoreLabel').innerText = "Score: " + bScore; }
+                if(bird.y > 480 || bird.y < 0 || (bird.x + 20 > p.x && bird.x < p.x + 40 && (bird.y - 20 < p.t || bird.y > p.b))) {
+                    bActive = false; saveScore(bScore); alert("Game Over! Score Saved.");
                 }
+                if(p.x < -40) pipes.splice(i, 1);
             });
-            if(bActive) requestAnimationFrame(bLoop);
+            requestAnimationFrame(updateGame);
         }
-        window.onkeydown=(e)=>{if(e.code==='Space') bird.v=-5;};
-        bCvs.onmousedown=()=>{bird.v=-5;};
+
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); bird.v = -5; });
+        window.onkeydown = (e) => { if(e.code === 'Space') bird.v = -5; };
+
+        // BG Particles
+        const bg = document.getElementById('bgCanvas'), bctx = bg.getContext('2d');
+        function resize() { bg.width = window.innerWidth; bg.height = window.innerHeight; } resize();
+        let particles = Array(60).fill().map(() => ({ x: Math.random() * bg.width, y: Math.random() * bg.height, s: Math.random() * 2 }));
+        function drawBg() {
+            bctx.clearRect(0,0,bg.width,bg.height); bctx.fillStyle = "rgba(0,242,255,0.2)";
+            particles.forEach(p => { p.y -= 0.5; if(p.y < 0) p.y = bg.height; bctx.beginPath(); bctx.arc(p.x, p.y, p.s, 0, Math.PI*2); bctx.fill(); });
+            requestAnimationFrame(drawBg);
+        }
+        drawBg();
     </script>
 </body>
 </html>
