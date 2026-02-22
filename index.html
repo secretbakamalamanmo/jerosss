@@ -9,93 +9,116 @@
         :root { --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); --error: #ff4757; }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; position: fixed; }
-        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
         
-        /* AUTH SECTION */
-        .auth-container { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; z-index: 9999; transition: 0.5s; }
-        .logo-container { width: 100px; height: 100px; margin: 0 auto 10px; border: 2px solid var(--primary); border-radius: 25px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; animation: float 3s ease-in-out infinite; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* AUTH SECTION - SAME AS BEFORE */
+        .auth-container { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; z-index: 9999; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .logo-container { width: 90px; height: 90px; margin-bottom: 15px; border: 2px solid var(--primary); border-radius: 22px; overflow: hidden; background: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
         .logo-container img { width: 100%; height: 100%; object-fit: cover; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .ily-text { font-size: 0.9rem; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); font-weight: bold; margin-bottom: 20px; display: block; }
 
-        /* DASHBOARD SYSTEM */
+        /* MAIN DASHBOARD */
         .app-container { position: relative; width: 100%; height: 100%; display: none; }
-        .panel { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: var(--bg); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px; border-left: 1px solid var(--border); overflow-y: auto; }
 
-        /* Default Stacked Positions */
-        #missionsTab { z-index: 10; transform: translateX(0); padding-left: 20px; }
-        #doneTab { z-index: 20; transform: translateX(calc(100% - 80px)); padding-left: 60px; }
-        #birdTab { z-index: 30; transform: translateX(calc(100% - 40px)); padding-left: 60px; }
-        .panel.active { transform: translateX(0) !important; padding-left: 50px !important; }
+        /* BOTTOM DOCK NAVIGATION */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; height: 65px;
+            background: rgba(15, 22, 36, 0.9); backdrop-filter: blur(20px);
+            border-radius: 25px; border: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #6a7282; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
 
-        /* HANDLES */
-        .handle { position: absolute; left: 0; top: 0; width: 45px; height: 100%; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; text-orientation: mixed; font-size: 0.75rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-right: 1px solid var(--border); }
-        #doneTab .handle { background: linear-gradient(to bottom, #1a1a2e, var(--primary)); color: #000; }
-        #birdTab .handle { background: linear-gradient(to bottom, #1a1a2e, var(--secondary)); color: #000; }
+        /* PANEL SYSTEM (MODERN SLIDE) */
+        .panel { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            padding: 30px 20px 100px; /* Space for dock */
+            overflow-y: auto; transition: 0.4s ease; transform: translateX(100%); opacity: 0; 
+        }
+        .panel.active { transform: translateX(0); opacity: 1; }
 
         /* UI ELEMENTS */
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; font-size: 16px; }
-        .flex-row { display: flex; gap: 10px; margin-bottom: 5px; }
-        .btn-style { width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800; }
-        .task-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        input { width: 100%; padding: 15px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; color: white; outline: none; font-size: 16px; }
+        .flex-row { display: flex; gap: 10px; }
+        .btn-style { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 18px; border: none; cursor: pointer; color: white; font-weight: 800; font-size: 1rem; }
+        .task-card { background: var(--glass); padding: 18px; border-radius: 20px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
-        .auth-link { color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 15px; display: inline-block; }
-        #birdCanvas { width: 100%; max-width: 320px; background: #000; border-radius: 15px; }
+        #birdCanvas { width: 100%; background: #000; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
 
     <div class="auth-container" id="authSection">
-        <div class="logo-container"><img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=LOGO'"></div>
-        <h1 style="color: var(--primary); margin: 0;">School ni Jero</h1>
-        <span class="ily-text">ily mj</span>
+        <div class="logo-container"><img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=JERO'"></div>
+        <h1 style="color: var(--primary); margin: 0; letter-spacing: 1px;">School ni Jero</h1>
+        <span style="color: var(--secondary); font-weight: bold; margin-bottom: 25px;">ily mj</span>
         
         <div id="loginForm">
             <input type="text" id="loginUser" placeholder="Username">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
-            <span class="auth-link" onclick="toggleAuth('register')">Register</span>
+            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem;" onclick="toggleAuth('register')">Register Account</span></div>
         </div>
 
         <div id="registerForm" class="hidden">
             <input type="text" id="regName" placeholder="Full Name">
-            <input type="email" id="regEmail" placeholder="Email Address"> <input type="text" id="regUser" placeholder="Username">
+            <input type="email" id="regEmail" placeholder="Email Address">
+            <input type="text" id="regUser" placeholder="Username">
             <input type="password" id="regPass" placeholder="Password">
             <button class="btn-style" onclick="register()">CREATE ACCOUNT</button>
-            <span class="auth-link" onclick="toggleAuth('login')">Back to Login</span>
+            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem;" onclick="toggleAuth('login')">Back to Login</span></div>
         </div>
     </div>
 
     <div class="app-container" id="dashboard">
-        <div id="missionsTab" class="panel">
-            <h2 style="color: var(--primary)">Active Missions</h2>
-            <div style="background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
-                <input type="text" id="tName" placeholder="Task Name">
+        
+        <div id="missionsTab" class="panel active">
+            <h2 style="color: var(--primary); font-weight: 900; font-size: 2rem;">Missions</h2>
+            <div style="background: var(--glass); padding: 25px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 25px;">
+                <input type="text" id="tName" placeholder="Mission Name">
                 <input type="text" id="tSub" placeholder="Subject">
-                <div class="flex-row"> <input type="date" id="tDate">
+                <div class="flex-row">
+                    <input type="date" id="tDate">
                     <input type="time" id="tTime">
                 </div>
-                <button class="btn-style" onclick="addTask()">ADD MISSION</button>
+                <button class="btn-style" onclick="addTask()">ADD TO PLANNER</button>
             </div>
             <div id="taskList"></div>
-            <button class="btn-style" style="background: var(--error); margin-top: 50px;" onclick="location.reload()">SIGN OUT</button>
+            <button class="btn-style" style="background: #1a1a2e; border: 1px solid var(--error); color: var(--error); margin-top: 40px;" onclick="location.reload()">SIGN OUT</button>
         </div>
 
         <div id="doneTab" class="panel">
-            <div class="handle" onclick="togglePanel('doneTab')">COMPLETED ✅</div>
-            <h2 style="color: var(--primary)">Finished Missions</h2>
+            <h2 style="color: var(--primary); font-weight: 900;">Finished</h2>
             <div id="completedList"></div>
         </div>
 
         <div id="birdTab" class="panel">
-            <div class="handle" onclick="togglePanel('birdTab')">FLAPPY BIRD 🐦</div>
-            <h2 style="color: var(--secondary)">Flappy Jero</h2>
+            <h2 style="color: var(--secondary); font-weight: 900;">Mini Game</h2>
             <div style="text-align: center;">
                 <canvas id="birdCanvas" width="320" height="400"></canvas>
-                <h3 id="birdScore">Score: 0</h3>
-                <button class="btn-style" onclick="initBird()">START / RESTART</button>
+                <h3 id="birdScore" style="font-size: 1.5rem; margin: 15px 0;">Score: 0</h3>
+                <button class="btn-style" style="width: 200px;" onclick="initBird()">RESTART</button>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-btn active" id="btnMissions" onclick="switchTab('missions')">
+                <span>📋</span>
+                <div>Planner</div>
+            </div>
+            <div class="nav-btn" id="btnDone" onclick="switchTab('done')">
+                <span>✅</span>
+                <div>Done</div>
+            </div>
+            <div class="nav-btn" id="btnBird" onclick="switchTab('bird')">
+                <span>🐦</span>
+                <div>Game</div>
             </div>
         </div>
     </div>
@@ -104,18 +127,17 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyDVCuoE5uOFiHUITez_7B0jQDNHBvW7jbC4rr12C66Yb1qvOhPkos3PF4HLtWRv_Ti/exec';
         let tasks = [];
 
-        function togglePanel(id) {
-            document.getElementById('doneTab').classList.toggle('active', id === 'doneTab');
-            document.getElementById('birdTab').classList.toggle('active', id === 'birdTab');
-            if(id === 'birdTab') initBird(); else bActive = false;
+        function switchTab(t) {
+            // Panels
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(t + 'Tab').classList.add('active');
+            
+            // Buttons
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
+            
+            if(t === 'bird') initBird(); else bActive = false;
         }
-
-        document.getElementById('missionsTab').addEventListener('click', (e) => {
-            if(e.target.closest('.handle')) return;
-            document.getElementById('doneTab').classList.remove('active');
-            document.getElementById('birdTab').classList.remove('active');
-            bActive = false;
-        });
 
         function startSystem() {
             const u = document.getElementById('loginUser').value, p = document.getElementById('loginPass').value;
@@ -123,8 +145,11 @@
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u, pass: p }) })
             .then(res => res.json()).then(data => {
                 if (data.result === "success") {
-                    document.getElementById('authSection').style.transform = 'translateY(-100%)';
-                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('authSection').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('authSection').style.display = 'none';
+                        document.getElementById('dashboard').style.display = 'block';
+                    }, 600);
                 } else alert("Invalid Login!");
             });
         }
@@ -142,12 +167,10 @@
 
         function addTask() {
             const n = document.getElementById('tName').value, s = document.getElementById('tSub').value, 
-                  d = document.getElementById('tDate').value, t = document.getElementById('tTime').value,
-                  u = document.getElementById('loginUser').value;
+                  d = document.getElementById('tDate').value, t = document.getElementById('tTime').value;
             if(!n || !s) return;
             tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
             render();
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: u, task: `${n} (${s}) - Due: ${d} ${t}` }) });
             document.getElementById('tName').value = ""; document.getElementById('tSub').value = "";
         }
 
@@ -159,7 +182,7 @@
                 card.innerHTML = `<div><b>${task.name}</b><br><small>${task.sub} | ${task.date} ${task.time}</small></div>`;
                 if(task.status === 'pending') {
                     const b = document.createElement('button'); b.innerText = "Done";
-                    b.style = "background:var(--primary); border:none; border-radius:8px; padding:8px 15px; font-weight:bold;";
+                    b.style = "background:var(--primary); border:none; border-radius:10px; padding:10px 18px; font-weight:bold; color:#000;";
                     b.onclick = () => { task.status = 'done'; render(); };
                     card.appendChild(b); l.appendChild(card);
                 } else c.appendChild(card);
@@ -172,11 +195,11 @@
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
         function bLoop(){
             if(!bActive) return;
-            bCtx.fillStyle="#000"; bCtx.fillRect(0,0,320,400);
+            bCtx.fillStyle="#0b101b"; bCtx.fillRect(0,0,320,400);
             bird.v+=bird.g; bird.y+=bird.v; bCtx.font="30px Arial"; bCtx.fillText("🐦", bird.x, bird.y);
             if(pipes.length===0||pipes[pipes.length-1].x<150) pipes.push({x:320, top:Math.random()*150+50});
             pipes.forEach(p=>{
-                p.x-=2; bCtx.fillStyle="rgba(0,242,255,0.3)"; bCtx.fillRect(p.x,0,40,p.top); bCtx.fillRect(p.x,p.top+120,40,400);
+                p.x-=2; bCtx.fillStyle="rgba(0,242,255,0.2)"; bCtx.fillRect(p.x,0,40,p.top); bCtx.fillRect(p.x,p.top+120,40,400);
                 if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
                 if(bird.y>400||bird.y<0||(bird.x+20>p.x && bird.x<p.x+40 && (bird.y<p.top||bird.y>p.top+100))) bActive=false;
             });
@@ -184,10 +207,10 @@
         }
         bCvs.addEventListener('touchstart', (e)=>{ e.preventDefault(); bird.v=-5; });
 
-        // Background
+        // Background Animation
         const bg = document.getElementById('bgCanvas'), ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
-        let pts = Array(50).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
+        let pts = Array(40).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
         function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.1)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
         drawBg();
     </script>
