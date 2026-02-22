@@ -6,7 +6,7 @@
     <title>School ni Jero - Official</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        :root { --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); --error: #ff4757; }
+        :root { --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); --error: #ff4757; }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; }
@@ -19,19 +19,7 @@
         .logo-container img { width: 100%; height: 100%; object-fit: cover; }
 
         /* MAIN DASHBOARD */
-        .app-container { position: relative; width: 100%; height: 100%; display: none; }
-
-        /* NAVIGATION DOCK */
-        .bottom-nav {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 65px;
-            background: rgba(15, 22, 36, 0.9); backdrop-filter: blur(20px);
-            border-radius: 25px; border: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #6a7282; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .nav-btn.active { color: var(--primary); }
+        .app-container { position: relative; width: 100%; height: 100%; display: none; flex-direction: column; }
 
         /* PANEL SYSTEM */
         .panel { 
@@ -48,7 +36,20 @@
         .btn-style { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 18px; border: none; cursor: pointer; color: white; font-weight: 800; font-size: 1rem; }
         .task-card { background: var(--glass); padding: 18px; border-radius: 20px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
-        #birdCanvas { width: 100%; max-width: 320px; background: #000; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; height: 70px;
+            background: rgba(15, 22, 36, 0.95); backdrop-filter: blur(15px);
+            border-radius: 25px; border: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000;
+        }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #6a7282; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
+        .nav-btn.active { color: var(--primary); }
+        
+        #birdCanvas { width: 100%; max-width: 320px; background: #000; border-radius: 20px; margin: 0 auto; display: block; }
     </style>
 </head>
 <body>
@@ -56,14 +57,14 @@
 
     <div class="auth-container" id="authSection">
         <div class="logo-container"><img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=JERO'"></div>
-        <h1 style="color: var(--primary); margin: 0; letter-spacing: 1px;">School ni Jero</h1>
+        <h1 style="color: var(--primary); margin: 0;">School ni Jero</h1>
         <span style="color: var(--secondary); font-weight: bold; margin-bottom: 25px;">ily mj</span>
         
         <div id="loginForm">
             <input type="text" id="loginUser" placeholder="Username">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
-            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem; cursor:pointer;" onclick="toggleAuth('register')">No account? Register</span></div>
+            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem; cursor:pointer;" onclick="toggleAuth('register')">Register Account</span></div>
         </div>
 
         <div id="registerForm" class="hidden">
@@ -79,7 +80,7 @@
     <div class="app-container" id="dashboard">
         <div id="missionsTab" class="panel active">
             <h2 style="color: var(--primary); font-weight: 900; font-size: 2rem;">Missions</h2>
-            <div style="background: var(--glass); padding: 25px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 25px;">
+            <div style="background: var(--glass); padding: 20px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 25px;">
                 <input type="text" id="tName" placeholder="Mission Name">
                 <input type="text" id="tSub" placeholder="Subject">
                 <div class="flex-row">
@@ -89,7 +90,7 @@
                 <button class="btn-style" onclick="addTask()">ADD TO PLANNER</button>
             </div>
             <div id="taskList"></div>
-            <button class="btn-style" style="background: #1a1a2e; border: 1px solid var(--error); color: var(--error); margin-top: 40px;" onclick="location.reload()">SIGN OUT</button>
+            <button class="btn-style" style="background: #1a1a2e; color: var(--error); margin-top: 40px;" onclick="location.reload()">SIGN OUT</button>
         </div>
 
         <div id="doneTab" class="panel">
@@ -102,19 +103,21 @@
             <div style="text-align: center;">
                 <canvas id="birdCanvas" width="320" height="400"></canvas>
                 <h3 id="birdScore" style="font-size: 1.5rem; margin: 15px 0;">Score: 0</h3>
-                <button class="btn-style" style="width: 200px;" onclick="initBird()">RESTART</button>
+                <button class="btn-style" style="width: 200px;" onclick="initBird()">RESTART GAME</button>
             </div>
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-btn active" id="btnMissions" onclick="switchTab('missions')">📋 Planner</div>
-            <div class="nav-btn" id="btnDone" onclick="switchTab('done')">✅ Done</div>
-            <div class="nav-btn" id="btnBird" onclick="switchTab('bird')">🐦 Game</div>
+            <div class="nav-btn active" id="btnMissions" onclick="switchTab('missions')"><span>📋</span><div>Planner</div></div>
+            <div class="nav-btn" id="btnDone" onclick="switchTab('done')"><span>✅</span><div>Done</div></div>
+            <div class="nav-btn" id="btnBird" onclick="switchTab('bird')"><span>🐦</span><div>Game</div></div>
         </div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxLpO5ETh_09bVZH73oLk1MF7vGhbM4Zcqn77fS0mO0tnBQxV42tCjGboSFR8cKG2jw/exec';
+        // PASTE YOUR NEW DEPLOYMENT URL HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw_t5TWsbE9GDqMKSV4ub4sT5uhK_2wc7FwYZhVeQaCPfrpkSWknjUbOXtVuAmPtbub/exec';
+        
         let tasks = [];
         let currentUser = "";
 
@@ -124,6 +127,11 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
             if(t === 'bird') initBird(); else bActive = false;
+        }
+
+        function toggleAuth(m){ 
+            document.getElementById('loginForm').classList.toggle('hidden', m === 'register');
+            document.getElementById('registerForm').classList.toggle('hidden', m === 'login');
         }
 
         function startSystem() {
@@ -136,25 +144,19 @@
                     document.getElementById('authSection').style.opacity = '0';
                     setTimeout(() => {
                         document.getElementById('authSection').style.display = 'none';
-                        document.getElementById('dashboard').style.display = 'block';
+                        document.getElementById('dashboard').style.display = 'flex';
                     }, 600);
                 } else alert("Invalid Login!");
             });
         }
 
         function register() {
-            const u = document.getElementById('regUser').value, 
-                  e = document.getElementById('regEmail').value, 
-                  p = document.getElementById('regPass').value,
-                  n = document.getElementById('regName').value;
-            if(!u || !e || !p) return;
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "REGISTER", name: n, user: u, email: e, pass: p }) })
+            const n = document.getElementById('regName').value,
+                  e = document.getElementById('regEmail').value,
+                  u = document.getElementById('regUser').value,
+                  p = document.getElementById('regPass').value;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "REGISTER", name: n, email: e, user: u, pass: p }) })
             .then(() => { alert("Account Created!"); toggleAuth('login'); });
-        }
-
-        function toggleAuth(m){ 
-            document.getElementById('loginForm').classList.toggle('hidden', m === 'register');
-            document.getElementById('registerForm').classList.toggle('hidden', m === 'login');
         }
 
         function addTask() {
@@ -163,8 +165,11 @@
             if(!n || !s) return;
             
             const taskStr = `${n} (${s}) - Due: ${d} ${t}`;
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: currentUser, task: taskStr }) });
             
+            // Send to Sheets
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: currentUser, task: taskStr }) })
+            .then(() => console.log("Task Saved to Sheet"));
+
             tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
             render();
             document.getElementById('tName').value = ""; document.getElementById('tSub').value = "";
@@ -185,7 +190,7 @@
             });
         }
 
-        // BIRD GAME LOGIC
+        // BIRD GAME
         const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
         let bird, pipes, bScore, bActive=false;
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
@@ -206,7 +211,7 @@
         }
         bCvs.addEventListener('touchstart', (e)=>{ e.preventDefault(); bird.v=-5; });
 
-        // Background Animation
+        // Background
         const bg = document.getElementById('bgCanvas'), ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
         let pts = Array(40).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
