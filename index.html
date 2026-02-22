@@ -3,231 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Jero App Pro</title>
+    <title>School ni Jero - Official</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-
-        :root {
-            --primary: #00f2ff;
-            --secondary: #ff00d4;
-            --bg: #0b101b;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+        
+        :root { 
+            --primary: #00f2ff; 
+            --secondary: #ff00d4; 
+            --bg: #0b101b; 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --border: rgba(255, 255, 255, 0.1); 
+            --error: #ff4757; 
         }
 
-        /* ANTI-PANGIT ANDROID FIXES */
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
-            outline: none;
+        /* ANDROID NATIVE FEEL FIXES */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
             touch-action: manipulation;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg); font-family: 'Inter', sans-serif;
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: var(--bg); font-family: 'Inter', sans-serif; 
             color: white; overflow: hidden; position: fixed;
         }
 
-        /* LOGIN OVERLAY */
-        .auth-overlay {
-            position: fixed; inset: 0; background: var(--bg);
-            z-index: 10000; display: flex; justify-content: center;
-            align-items: center; padding: 25px; transition: 0.5s;
-        }
-        .auth-card {
-            background: var(--glass); backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 30px; border: 1px solid var(--border);
-            width: 100%; max-width: 350px; text-align: center;
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* AUTH SECTION */
+        .auth-container { 
+            position: fixed; inset: 0; background: var(--bg); 
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 40px; 
+            text-align: center; transition: 0.5s;
         }
 
-        /* TAB SYSTEM - SLIDING PANELS */
+        /* SLIDING PANELS SYSTEM */
         .panel {
             position: fixed;
             top: 0;
             right: 0;
-            width: 92%; /* May 8% na silip para sa clickable area */
+            width: 100%;
             height: 100%;
             background: var(--bg);
-            border-left: 2px solid var(--border);
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 10;
             padding: 30px 20px;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            padding-left: 50px; /* Space para sa clickable handles */
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
         }
 
-        /* Background silip handles */
-        .panel::before {
-            content: '';
-            position: absolute;
-            left: -40px;
-            top: 0;
-            width: 40px;
-            height: 100%;
-            background: transparent;
-            cursor: pointer;
-        }
+        /* Default Positions */
+        #missionsTab { z-index: 10; transform: translateX(0); padding-left: 20px; }
+        #doneTab { z-index: 20; transform: translateX(calc(100% - 40px)); }
+        #gameTab { z-index: 30; transform: translateX(calc(100% - 20px)); }
 
-        /* Active State */
-        .panel.active { transform: translateX(0); z-index: 100; }
-        
-        /* Position of hidden tabs (Stacked at the right) */
-        #plannerTab { transform: translateX(0); z-index: 5; width: 100%; border: none; } /* Default base */
-        #doneTab { transform: translateX(92%); z-index: 6; border-left: 3px solid var(--primary); }
-        #gameTab { transform: translateX(92%); z-index: 7; border-left: 3px solid var(--secondary); }
+        /* Active States */
+        .panel.active { transform: translateX(0) !important; }
 
-        /* Navigation Handles (Clickable edges) */
-        .tab-handle {
+        /* Side Handles (Yung sinasabi mong clickable kahit nakahide) */
+        .handle {
             position: absolute;
-            left: 0;
-            top: 0;
-            width: 40px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            left: 0; top: 0;
+            width: 45px; height: 100%;
+            display: flex; align-items: center; justify-content: center;
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            font-size: 0.7rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: rgba(255,255,255,0.02);
-            color: var(--primary);
+            font-size: 0.8rem; font-weight: 900;
+            letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer;
+            border-right: 1px solid var(--border);
         }
+        #doneTab .handle { background: linear-gradient(to bottom, #1a1a2e, var(--primary)); color: #000; }
+        #gameTab .handle { background: linear-gradient(to bottom, #1a1a2e, var(--secondary)); color: #000; }
 
-        /* Content Styles */
-        input {
-            width: 100%; padding: 15px; margin-bottom: 10px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            border-radius: 15px; color: white; user-select: text !important;
+        /* UI ELEMENTS */
+        .card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+        input { 
+            width: 100%; padding: 15px; margin-bottom: 10px; 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); 
+            border-radius: 12px; color: white; outline: none; font-size: 16px;
         }
-        .btn-main {
-            width: 100%; padding: 15px; border-radius: 15px; border: none;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white; font-weight: 800; margin-bottom: 20px;
+        .btn-style { 
+            width: 100%; padding: 15px; background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            border-radius: 15px; border: none; cursor: pointer; color: white; font-weight: 800; 
         }
-        .section-title { font-size: 1.5rem; font-weight: 900; margin-bottom: 20px; color: var(--primary); }
-        .card { background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .task-card { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
+            border-left: 5px solid var(--primary); margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
         
-        #birdCanvas { width: 100%; border-radius: 20px; background: #000; }
+        #birdCanvas { width: 100%; max-width: 350px; background: #000; border-radius: 15px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="authScreen" class="auth-overlay">
-        <div class="auth-card">
-            <h2 style="color:var(--primary)">Jero App</h2>
-            <input type="text" id="user" placeholder="Username">
-            <input type="password" id="pass" placeholder="Password">
-            <button class="btn-main" onclick="login()">LOGIN</button>
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="auth-container" id="authSection">
+        <h1 style="color: var(--primary); margin: 0;">School ni Jero</h1>
+        <p style="color: var(--secondary); font-weight: bold;">ily mj</p>
+        <div id="loginForm">
+            <input type="text" id="loginUser" placeholder="Username">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
         </div>
     </div>
 
-    <div id="plannerTab" class="panel active">
-        <div class="section-title">Planner</div>
+    <div id="missionsTab" class="panel">
+        <h2 style="color: var(--primary)">Missions</h2>
         <div class="card">
-            <input type="text" id="taskInput" placeholder="New Mission...">
-            <button class="btn-main" onclick="addTask()">ADD TASK</button>
+            <input type="text" id="tName" placeholder="Task Name">
+            <input type="text" id="tSub" placeholder="Subject">
+            <button class="btn-style" onclick="addTask()">ADD MISSION</button>
         </div>
         <div id="taskList"></div>
-        <button class="btn-main" style="background:#ff4757; margin-top:20px" onclick="location.reload()">LOGOUT</button>
+        <button class="btn-style" style="background: var(--error); margin-top: 50px;" onclick="location.reload()">SIGN OUT</button>
     </div>
 
-    <div id="doneTab" class="panel" onclick="openTab('doneTab')">
-        <div class="tab-handle">Completed</div>
-        <div class="section-title">Finished</div>
-        <div id="doneList"></div>
+    <div id="doneTab" class="panel">
+        <div class="handle" onclick="openPanel('doneTab')">COMPLETED ✅</div>
+        <h2 style="color: var(--primary)">Finished</h2>
+        <div id="completedList"></div>
     </div>
 
-    <div id="gameTab" class="panel" onclick="openTab('gameTab')">
-        <div class="tab-handle" style="color:var(--secondary)">Flappy Jero</div>
-        <div class="section-title">Mini Game</div>
-        <canvas id="birdCanvas" width="320" height="400"></canvas>
-        <div id="scoreBox" style="font-size: 20px; margin: 10px 0;">Score: 0</div>
-        <button class="btn-main" onclick="initBird()">START GAME</button>
+    <div id="gameTab" class="panel">
+        <div class="handle" onclick="openPanel('gameTab')">FLAPPY BIRD 🐦</div>
+        <h2 style="color: var(--primary)">Flappy Jero</h2>
+        <div style="text-align: center;">
+            <canvas id="birdCanvas" width="320" height="400"></canvas>
+            <h3 id="birdScore">Score: 0</h3>
+            <button class="btn-style" onclick="initBird()">START / RESTART</button>
+        </div>
     </div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyDVCuoE5uOFiHUITez_7B0jQDNHBvW7jbC4rr12C66Yb1qvOhPkos3PF4HLtWRv_Ti/exec';
-        
-        // TAB LOGIC
-        function openTab(id) {
-            // Reset lahat ng tab na nasa harapan niya
+        let tasks = [];
+
+        // PANEL NAVIGATION
+        function openPanel(id) {
             if (id === 'doneTab') {
-                document.getElementById('doneTab').classList.add('active');
-                document.getElementById('gameTab').classList.remove('active'); // Para makita yung Done
-            } else if (id === 'gameTab') {
-                document.getElementById('gameTab').classList.add('active');
-            } else {
-                // Planner: Hide all others
-                document.getElementById('doneTab').classList.remove('active');
+                document.getElementById('doneTab').classList.toggle('active');
                 document.getElementById('gameTab').classList.remove('active');
+            } else if (id === 'gameTab') {
+                document.getElementById('gameTab').classList.toggle('active');
+                if(document.getElementById('gameTab').classList.contains('active')) initBird();
+                else bActive = false;
             }
         }
 
-        // Add swipe/click support for Planner
-        document.getElementById('plannerTab').onclick = () => {
+        // Click Planner to close others
+        document.getElementById('missionsTab').addEventListener('click', () => {
             document.getElementById('doneTab').classList.remove('active');
             document.getElementById('gameTab').classList.remove('active');
-        };
+            bActive = false;
+        });
 
-        function login() {
-            const u = document.getElementById('user').value, p = document.getElementById('pass').value;
+        function startSystem() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
             if(!u || !p) return;
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u, pass: p }) })
             .then(res => res.json()).then(data => {
-                if(data.result === "success") {
-                    document.getElementById('authScreen').style.opacity = '0';
-                    setTimeout(() => document.getElementById('authScreen').style.display = 'none', 500);
-                } else alert("Mali password!");
+                if (data.result === "success") {
+                    document.getElementById('authSection').style.transform = 'translateY(-100%)';
+                } else alert("Mali account mo!");
             });
         }
 
         function addTask() {
-            const task = document.getElementById('taskInput').value, user = document.getElementById('user').value;
-            if(!task) return;
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: user, task: task }) });
-            const item = document.createElement('div');
-            item.className = 'card';
-            item.innerHTML = `<b>${task}</b><br><small>Mission Sent!</small>`;
-            document.getElementById('taskList').prepend(item);
-            document.getElementById('taskInput').value = "";
+            const n = document.getElementById('tName').value, s = document.getElementById('tSub').value, u = document.getElementById('loginUser').value;
+            if(!n || !s) return;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: u, task: n + " (" + s + ")" }) });
+            tasks.push({id:Date.now(), name:n, sub:s, status:'pending'});
+            render();
+            document.getElementById('tName').value = ""; document.getElementById('tSub').value = "";
         }
 
-        // MINIMAL GAME LOGIC
-        const canvas = document.getElementById('birdCanvas'), ctx = canvas.getContext('2d');
-        let bird, pipes, bScore, bActive = false;
-
-        function initBird() {
-            bird = { x: 50, y: 150, v: 0, g: 0.25 }; pipes = []; bScore = 0; bActive = true;
-            loop();
-        }
-
-        function loop() {
-            if(!bActive) return;
-            ctx.fillStyle = "#000"; ctx.fillRect(0,0,320,400);
-            bird.v += bird.g; bird.y += bird.v;
-            ctx.fillStyle = "cyan"; ctx.fillRect(bird.x, bird.y, 20, 20);
-            
-            if(pipes.length === 0 || pipes[pipes.length-1].x < 150) pipes.push({x:320, h:Math.random()*200+50});
-            pipes.forEach((p,i) => {
-                p.x -= 2;
-                ctx.fillStyle = "white"; ctx.fillRect(p.x, 0, 30, p.h); ctx.fillRect(p.x, p.h+100, 30, 400);
-                if(p.x === 50) { bScore++; document.getElementById('scoreBox').innerText = "Score: "+bScore; }
-                if(bird.y > 400 || bird.y < 0 || (bird.x < p.x+30 && bird.x+20 > p.x && (bird.y < p.h || bird.y+20 > p.h+100))) {
-                    bActive = false;
-                    fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "SCORE", user: document.getElementById('user').value, score: bScore }) });
-                    alert("Game Over! Score Saved.");
-                }
-                if(p.x < -30) pipes.splice(i,1);
+        function render() {
+            const l = document.getElementById('taskList'), c = document.getElementById('completedList');
+            l.innerHTML = ""; c.innerHTML = "";
+            tasks.forEach(task => {
+                const card = document.createElement('div'); card.className = 'task-card';
+                card.innerHTML = `<div><b>${task.name}</b><br><small>${task.sub}</small></div>`;
+                if(task.status === 'pending') {
+                    const b = document.createElement('button'); b.innerText = "Finish";
+                    b.style = "background:var(--primary); border:none; border-radius:8px; padding:8px; font-weight:bold;";
+                    b.onclick = (e) => { e.stopPropagation(); task.status = 'done'; render(); };
+                    card.appendChild(b); l.appendChild(card);
+                } else c.appendChild(card);
             });
-            requestAnimationFrame(loop);
         }
-        canvas.onclick = () => bird.v = -5;
+
+        // BIRD GAME
+        const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
+        let bird, pipes, bScore, bActive=false;
+
+        function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
+        function bLoop(){
+            if(!bActive) return;
+            bCtx.fillStyle="#000"; bCtx.fillRect(0,0,320,400);
+            bird.v+=bird.g; bird.y+=bird.v;
+            bCtx.font="30px Arial"; bCtx.fillText("🐦", bird.x, bird.y);
+            if(pipes.length===0||pipes[pipes.length-1].x<150) pipes.push({x:320, top:Math.random()*150+50});
+            pipes.forEach((p,i)=>{
+                p.x-=2; bCtx.fillStyle= "rgba(0,242,255,0.3)";
+                bCtx.fillRect(p.x,0,40,p.top); bCtx.fillRect(p.x,p.top+120,40,400);
+                if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
+                if(bird.y>400||bird.y<0||(bird.x+20>p.x && bird.x<p.x+40 && (bird.y<p.top||bird.y>p.top+100))) {
+                    bActive=false; 
+                    fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "SCORE", user: document.getElementById('loginUser').value, score: bScore }) });
+                    alert("Game Over! Score: " + bScore);
+                }
+            });
+            requestAnimationFrame(bLoop);
+        }
+        bCvs.addEventListener('touchstart', (e)=>{ e.preventDefault(); bird.v=-5; });
+
+        // Background
+        const bg = document.getElementById('bgCanvas'), ctxB = bg.getContext('2d');
+        function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
+        let pts = Array(50).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
+        function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.1)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
+        drawBg();
     </script>
 </body>
 </html>
