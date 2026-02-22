@@ -6,112 +6,47 @@
     <title>School ni Jero - Official</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-
-        :root {
-            --primary: #00f2ff;
-            --secondary: #ff00d4;
-            --bg: #0b101b;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-            --error: #ff4757;
-        }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg); font-family: 'Inter', sans-serif;
-            color: white; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
-
+        :root { --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); --error: #ff4757; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-        .logo-container {
-            width: 100px; height: 100px; margin: 0 auto 10px;
-            border: 2px solid var(--primary); border-radius: 25px;
-            overflow: hidden; background: #000;
-            display: flex; align-items: center; justify-content: center;
-            animation: float 3s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-        }
+        .logo-container { width: 100px; height: 100px; margin: 0 auto 10px; border: 2px solid var(--primary); border-radius: 25px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; animation: float 3s ease-in-out infinite; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
         .logo-container img { width: 100%; height: 100%; object-fit: cover; }
-
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-        /* Shake Animation for empty fields */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-
-        .shake-error {
-            animation: shake 0.3s ease-in-out;
-            border: 1.5px solid var(--error) !important;
-        }
-
-        .ily-text {
-            font-size: 0.9rem; color: var(--secondary);
-            text-shadow: 0 0 10px var(--secondary);
-            font-weight: bold; margin-bottom: 20px; display: block;
-        }
-
-        .auth-container {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px);
-            border: 1px solid var(--border); border-radius: 40px;
-            padding: 40px; width: 380px; text-align: center; z-index: 100;
-        }
-
-        .app-container {
-            display: none; background: var(--glass); backdrop-filter: blur(30px);
-            border: 1px solid var(--border); border-radius: 30px;
-            width: 95%; max-width: 1150px; height: 85vh; overflow: hidden;
-            position: absolute; opacity: 0; transition: 0.5s ease;
-        }
-
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .shake-error { animation: shake 0.3s ease-in-out; border: 1.5px solid var(--error) !important; }
+        .ily-text { font-size: 0.9rem; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); font-weight: bold; margin-bottom: 20px; display: block; }
+        .auth-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 40px; padding: 40px; width: 380px; text-align: center; z-index: 100; }
+        .app-container { display: none; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: 30px; width: 95%; max-width: 1150px; height: 85vh; overflow: hidden; position: absolute; opacity: 0; transition: 0.5s ease; }
         .sidebar { width: 250px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid var(--border); padding: 30px 15px; display: flex; flex-direction: column; }
         .nav-item { padding: 15px 20px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #6a7282; font-weight: 600; transition: 0.3s; }
-        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
         .nav-item.active { background: rgba(0, 242, 255, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
-
         .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; transition: 0.2s; }
-        
+        input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
         .btn-style { width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800; }
-
         .task-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
         .auth-link { color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: inline-block; }
     </style>
 </head>
 <body>
-
     <canvas id="bgCanvas"></canvas>
-
     <div class="auth-container" id="authSection">
-        <div class="logo-container">
-            <img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=LOGO'">
-        </div>
+        <div class="logo-container"><img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=LOGO'"></div>
         <h1 style="color: var(--primary); margin: 0; font-size: 1.8rem;">School ni Jero</h1>
         <span class="ily-text">ily mj</span>
-        
         <div id="loginForm">
             <input type="text" id="loginUser" placeholder="Username">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
-            <div style="margin-top: 15px;">
-                <span class="auth-link" onclick="toggleAuth('register')">Register</span>
-            </div>
+            <div style="margin-top: 15px;"><span class="auth-link" onclick="toggleAuth('register')">Register</span></div>
         </div>
-
         <div id="registerForm" class="hidden">
             <input type="text" id="regName" placeholder="Full Name">
             <input type="email" id="regEmail" placeholder="Email Address">
             <input type="text" id="regUser" placeholder="Username">
             <input type="password" id="regPass" placeholder="Password">
             <button class="btn-style" onclick="register()">CREATE ACCOUNT</button>
-            <div style="margin-top: 15px;">
-                <span class="auth-link" onclick="toggleAuth('login')">Back to Login</span>
-            </div>
+            <div style="margin-top: 15px;"><span class="auth-link" onclick="toggleAuth('login')">Back to Login</span></div>
         </div>
     </div>
 
@@ -124,13 +59,12 @@
             <div class="nav-item active" id="navMissions" onclick="tab('missions')">Planner</div>
             <div class="nav-item" id="navDone" onclick="tab('done')">Completed ✅</div>
             <div class="nav-item" id="navBird" onclick="tab('bird')">Flappy Bird 🐦</div>
-            <div class="nav-item" onclick="location.reload()" style="margin-top:auto; color:#ff4757;">Sign Out</div>
+            <div class="nav-item" onclick="location.reload()" style="margin-top:auto; color:var(--error);">Sign Out</div>
         </div>
-
         <div class="main-content">
             <div id="missionsTab">
                 <h2>Active Missions</h2>
-                <div style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
+                <div style="background: var(--glass); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
                     <input type="text" id="tName" placeholder="Task Name">
                     <input type="text" id="tSub" placeholder="Subject">
                     <div style="display: flex; gap: 10px;">
@@ -141,12 +75,7 @@
                 </div>
                 <div id="taskList"></div>
             </div>
-
-            <div id="doneTab" class="hidden">
-                <h2>Finished Missions</h2>
-                <div id="completedList"></div>
-            </div>
-
+            <div id="doneTab" class="hidden"><h2>Finished Missions</h2><div id="completedList"></div></div>
             <div id="birdTab" class="hidden" style="text-align: center;">
                 <h2>Flappy Jero</h2>
                 <canvas id="birdCanvas" width="400" height="500"></canvas>
@@ -157,130 +86,102 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURATION ---
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyqUbIb4mOq8LNduepcX39goDAc0dpo4SKm1D3TPJiMwUEwZd96zfZegMsyCwUYag4D/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxI87lZoq8l4O5VDG0mG7D08UX4BDZtd5E8zHGe0BMCyE-N4XdX1d9RFqfgqenjjr_2/exec';
 
-        // --- 2. AUTHENTICATION (LOGIN & REGISTER) ---
         function startSystem() {
-            const uField = document.getElementById('loginUser');
-            const pField = document.getElementById('loginPass');
-            let hasError = false;
-
-            // Reset shake
-            uField.classList.remove('shake-error');
-            pField.classList.remove('shake-error');
-
-            // Validation with Shake Effect
-            if (!uField.value) { uField.classList.add('shake-error'); hasError = true; }
-            if (!pField.value) { pField.classList.add('shake-error'); hasError = true; }
-            if (hasError) return;
-
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify({ type: "LOGIN", user: uField.value, pass: pField.value })
-            })
-            .then(res => res.json())
-            .then(data => {
+            const u = document.getElementById('loginUser'), p = document.getElementById('loginPass');
+            u.classList.remove('shake-error'); p.classList.remove('shake-error');
+            if (!u.value || !p.value) { if(!u.value) u.classList.add('shake-error'); if(!p.value) p.classList.add('shake-error'); return; }
+            
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u.value, pass: p.value }) })
+            .then(res => res.json()).then(data => {
                 if (data.result === "success") {
                     document.getElementById('authSection').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'flex';
                     setTimeout(() => document.getElementById('dashboard').style.opacity = '1', 50);
-                } else {
-                    // English alert and shake
-                    alert("Invalid Username or Password!");
-                    uField.classList.add('shake-error');
-                    pField.classList.add('shake-error');
-                }
-            })
-            .catch(error => {
-                console.error('Error!', error.message);
-                alert("Connection Error. Please check your script deployment or internet.");
-            });
+                } else { alert("Invalid Username or Password!"); u.classList.add('shake-error'); p.classList.add('shake-error'); }
+            }).catch(() => alert("Connection Error!"));
         }
 
         function register() {
             const fields = ['regName', 'regEmail', 'regUser', 'regPass'];
-            let hasError = false;
-            let data = { type: "REGISTER" };
-
+            let err = false;
             fields.forEach(id => {
-                const el = document.getElementById(id);
-                el.classList.remove('shake-error');
-                if (!el.value) {
-                    el.classList.add('shake-error');
-                    hasError = true;
-                }
+                let f = document.getElementById(id); f.classList.remove('shake-error');
+                if(!f.value) { f.classList.add('shake-error'); err = true; }
             });
-
-            if (hasError) return;
+            if(err) return;
 
             fetch(scriptURL, {
                 method: 'POST',
                 body: JSON.stringify({ 
-                    type: "REGISTER", 
-                    name: document.getElementById('regName').value, 
-                    email: document.getElementById('regEmail').value, 
-                    user: document.getElementById('regUser').value, 
+                    type: "REGISTER", name: document.getElementById('regName').value, 
+                    email: document.getElementById('regEmail').value, user: document.getElementById('regUser').value, 
                     pass: document.getElementById('regPass').value 
                 })
-            })
-            .then(() => {
-                alert("Account Successfully Created! You can now login.");
-                toggleAuth('login');
-            })
-            .catch(err => alert("Registration failed. Please try again."));
+            }).then(() => { alert("Account Created! You can now login."); toggleAuth('login'); });
         }
 
-        // --- 3. UI LOGIC (TABS & ANIMATION) ---
+        function addTask() {
+            const n = document.getElementById('tName').value, s = document.getElementById('tSub').value, 
+                  d = document.getElementById('tDate').value, t = document.getElementById('tTime').value,
+                  u = document.getElementById('loginUser').value;
+            if(!n || !s) return;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: u, task: n + " (" + s + ")" }) });
+            tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
+            render();
+        }
+
+        function saveScore(s) {
+            const u = document.getElementById('loginUser').value;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "SCORE", user: u, score: s }) });
+        }
+
+        function render() {
+            const l = document.getElementById('taskList'), c = document.getElementById('completedList');
+            l.innerHTML = ""; c.innerHTML = "";
+            tasks.forEach(task => {
+                const card = document.createElement('div'); card.className = 'task-card';
+                card.innerHTML = `<div><b>${task.name}</b> (${task.sub})<br><small>${task.date} | ${task.time}</small></div>`;
+                if(task.status === 'pending') {
+                    const b = document.createElement('button'); b.innerText = "Finish";
+                    b.style = "background:var(--primary); border:none; border-radius:8px; padding:5px 12px; cursor:pointer; font-weight:bold;";
+                    b.onclick = () => { task.status = 'done'; render(); };
+                    card.appendChild(b); l.appendChild(card);
+                } else c.appendChild(card);
+            });
+        }
+
+        function toggleAuth(m){ ['loginForm','registerForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
+        function tab(t){ ['missionsTab','doneTab','birdTab'].forEach(id=>document.getElementById(id).classList.add('hidden')); ['navMissions','navDone','navBird'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById(t+'Tab').classList.remove('hidden'); document.getElementById('nav'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active'); if(t==='bird')initBird(); else bActive=false; }
+
+        // BG Animation
         const bg = document.getElementById('bgCanvas'); const ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
         let pts = Array(100).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
         function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.15)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
         drawBg();
 
-        function toggleAuth(m){ ['loginForm','registerForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
-        function tab(t){ ['missionsTab','doneTab','birdTab'].forEach(id=>document.getElementById(id).classList.add('hidden')); ['navMissions','navDone','navBird'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById(t+'Tab').classList.remove('hidden'); document.getElementById('nav'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active'); if(t==='bird')initBird(); else bActive=false; }
-
-        // --- 4. PLANNER & MINI-GAME ---
-        let tasks = [];
-        function addTask(){
-            const n=document.getElementById('tName').value, s=document.getElementById('tSub').value, d=document.getElementById('tDate').value, t=document.getElementById('tTime').value;
-            if(!n||!s) return;
-            tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
-            render();
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: document.getElementById('loginUser').value, task: n }) });
-        }
-        function render(){
-            const l=document.getElementById('taskList'), c=document.getElementById('completedList'); l.innerHTML=""; c.innerHTML="";
-            tasks.forEach(task=>{
-                const card=document.createElement('div'); card.className='task-card';
-                card.innerHTML=`<div><b>${task.name}</b> (${task.sub})<br><small style="color:var(--secondary)">${task.date} | ${task.time}</small></div>`;
-                if(task.status==='pending'){
-                    const b=document.createElement('button'); b.innerText="Finish"; b.style="background:var(--primary); border:none; border-radius:8px; padding:5px 12px; cursor:pointer; font-weight:bold;";
-                    b.onclick=()=>{task.status='done'; render();}; card.appendChild(b); l.appendChild(card);
-                } else c.appendChild(card);
-            });
-        }
-
+        // Bird Game Logic
         const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
-        let bird, pipes, bScore, bActive=false;
+        let bird, pipes, bScore, bActive=false, tasks = [];
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
-        function jump(){ if(bActive) bird.v=-5; }
-        bCvs.onmousedown=jump; window.onkeydown=(e)=>{if(e.code==='Space')jump()};
         function bLoop(){
-            if(!bActive||document.getElementById('birdTab').classList.contains('hidden')) return;
+            if(!bActive || document.getElementById('birdTab').classList.contains('hidden')) return;
             bCtx.fillStyle="#0b101b"; bCtx.fillRect(0,0,400,500);
             bird.v+=bird.g; bird.y+=bird.v; bCtx.font="30px Arial"; bCtx.fillText("🐦", bird.x, bird.y);
-            if(pipes.length===0||pipes[pipes.length-1].x<200){ let h=Math.random()*200+50; pipes.push({x:400, top:h, bot:h+130}); }
+            if(pipes.length===0||pipes[pipes.length-1].x<200) pipes.push({x:400, top:Math.random()*200+50});
             pipes.forEach((p,i)=>{
-                p.x-=2.5; bCtx.fillStyle="rgba(0,242,255,0.2)"; bCtx.fillRect(p.x,0,50,p.top); bCtx.fillRect(p.x,p.bot,50,500);
-                if(bird.x+20>p.x && bird.x<p.x+50 && (bird.y-20<p.top||bird.y>p.bot)) bActive=false;
+                p.x-=2.5; bCtx.fillStyle="rgba(0,242,255,0.2)"; bCtx.fillRect(p.x,0,50,p.top); bCtx.fillRect(p.x,p.top+130,50,500);
                 if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
-                if(p.x<-50) pipes.splice(i,1);
+                if(bird.y>500||bird.y<0||(bird.x+20>p.x && bird.x<p.x+50 && (bird.y<p.top||bird.y>p.top+110))) {
+                    bActive=false; saveScore(bScore); alert("Game Over! Score: " + bScore);
+                }
             });
-            if(bird.y>500||bird.y<0) bActive=false;
-            if(!bActive) { bCtx.fillStyle="white"; bCtx.fillText("GAME OVER", 120, 250); } else requestAnimationFrame(bLoop);
+            if(bActive) requestAnimationFrame(bLoop);
         }
+        window.onkeydown=(e)=>{if(e.code==='Space') bird.v=-5;};
+        bCvs.onmousedown=()=>{bird.v=-5;};
     </script>
 </body>
 </html>
