@@ -24,7 +24,6 @@
 
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* --- LOGO IMAGE STYLE --- */
         .logo-container {
             width: 100px; height: 100px; margin: 0 auto 10px;
             border: 2px solid var(--primary); border-radius: 25px;
@@ -33,9 +32,7 @@
             animation: float 3s ease-in-out infinite;
             box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
         }
-        .logo-container img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
+        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
@@ -45,14 +42,12 @@
             font-weight: bold; margin-bottom: 20px; display: block;
         }
 
-        /* --- AUTH SECTION --- */
         .auth-container {
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px);
             border: 1px solid var(--border); border-radius: 40px;
             padding: 40px; width: 380px; text-align: center; z-index: 100;
         }
 
-        /* --- DASHBOARD --- */
         .app-container {
             display: none; background: var(--glass); backdrop-filter: blur(30px);
             border: 1px solid var(--border); border-radius: 30px;
@@ -60,34 +55,17 @@
             position: absolute; opacity: 0; transition: 0.5s ease;
         }
 
-        .sidebar {
-            width: 250px; background: rgba(0, 0, 0, 0.4);
-            border-right: 1px solid var(--border);
-            padding: 30px 15px; display: flex; flex-direction: column;
-        }
-
-        .nav-item {
-            padding: 15px 20px; border-radius: 12px; margin-bottom: 8px;
-            cursor: pointer; color: #6a7282; font-weight: 600; transition: 0.3s;
-        }
+        .sidebar { width: 250px; background: rgba(0, 0, 0, 0.4); border-right: 1px solid var(--border); padding: 30px 15px; display: flex; flex-direction: column; }
+        .nav-item { padding: 15px 20px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; color: #6a7282; font-weight: 600; transition: 0.3s; }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
         .nav-item.active { background: rgba(0, 242, 255, 0.1); color: var(--primary); border-left: 4px solid var(--primary); }
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-
         input { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; box-sizing: border-box; }
         
-        .btn-style {
-            width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800;
-        }
+        .btn-style { width: 100%; padding: 12px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 25px; border: none; cursor: pointer; color: white; font-weight: 800; }
 
-        .task-card { 
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
-            border: 1px solid var(--border); margin-bottom: 10px; border-left: 5px solid var(--primary);
-            display: flex; justify-content: space-between; align-items: center; 
-        }
-
+        .task-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
         .auth-link { color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: inline-block; }
     </style>
@@ -105,25 +83,22 @@
         
         <div id="loginForm">
             <input type="text" id="loginUser" placeholder="Username">
-            <input type="password" placeholder="Password">
+            <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
             <div style="margin-top: 15px;">
-                <span class="auth-link" onclick="toggleAuth('register')">Register</span> | 
-                <span class="auth-link" onclick="toggleAuth('reset')">Forgot Password</span>
+                <span class="auth-link" onclick="toggleAuth('register')">Register</span>
             </div>
         </div>
 
         <div id="registerForm" class="hidden">
-            <input type="text" placeholder="Full Name">
-            <input type="email" placeholder="Email Address">
-            <input type="text" placeholder="Username">
-            <input type="password" placeholder="Password">
-            <button class="btn-style" onclick="toggleAuth('login')">CREATE ACCOUNT</button>
-        </div>
-
-        <div id="resetForm" class="hidden">
-            <input type="email" placeholder="Email Address">
-            <button class="btn-style" onclick="alert('Reset link sent!'); toggleAuth('login')">RESET</button>
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="email" id="regEmail" placeholder="Email Address">
+            <input type="text" id="regUser" placeholder="Username">
+            <input type="password" id="regPass" placeholder="Password">
+            <button class="btn-style" onclick="register()">CREATE ACCOUNT</button>
+            <div style="margin-top: 15px;">
+                <span class="auth-link" onclick="toggleAuth('login')">Back to Login</span>
+            </div>
         </div>
     </div>
 
@@ -169,63 +144,53 @@
     </div>
 
     <script>
+        // ILAGAY DITO ANG PINAKABAGONG URL MULA SA APPS SCRIPT
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxFedlSkKyFbcpzEaoKOhJYTPmawmBywzs2CXmbtwicmjKeMQzvQlq08_F6i0mGKnag/exec';
 
-        // Ito ang tulay papunta sa Google Sheet mo
-const scriptURL = 'https://script.google.com/macros/s/AKfycbyLdALre9f-w3iJytqduPiFpKGkP2qEx3nyIpctMVJ9EfFsQf8daVLFhToIzTFeD0qz/exec';
+        // LOGIN SYSTEM WITH VALIDATION
+        function startSystem() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
 
-function sendToJeroSheet(payload) {
-    fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors', // Mahalaga ito para hindi mag-error ang browser
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-}
+            if (!u || !p) return alert("Pakilagay ang username at password!");
 
-// Gamitin ito sa Register function
-function register() {
-    const n = document.getElementById('regName').value;
-    const u = document.getElementById('regUser').value;
-    const p = document.getElementById('regPass').value;
-    const e = document.getElementById('regEmail').value;
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify({ type: "LOGIN", user: u, pass: p })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === "success") {
+                    document.getElementById('authSection').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'flex';
+                    setTimeout(() => document.getElementById('dashboard').style.opacity = '1', 50);
+                } else {
+                    alert("Maling Username o Password!");
+                }
+            })
+            .catch(error => alert("Error: Siguraduhing tama ang scriptURL at may storage pa ang Google Drive mo."));
+        }
 
-    if(u && p) {
-        // Isave sa local
-        users[u] = p; 
-        save();
-        
-        // ISEND KAY ADMIN JERO (Sumbong sa Google Sheets)
-        sendToJeroSheet({
-            type: "REGISTER",
-            name: n,
-            user: u,
-            pass: p,
-            email: e
-        });
+        // REGISTRATION SYSTEM
+        function register() {
+            const n = document.getElementById('regName').value;
+            const e = document.getElementById('regEmail').value;
+            const u = document.getElementById('regUser').value;
+            const p = document.getElementById('regPass').value;
 
-        alert("Registered! Records sent to Admin.");
-        toggleAuth('login');
-    }
-}
+            if (!n || !u || !p) return alert("Paki-fill up lahat ng fields!");
 
-// Gamitin ito sa Add Task function
-function addTask() {
-    const n = document.getElementById('tName').value;
-    const s = document.getElementById('tSub').value;
-    
-    if(n && s) {
-        tasks.push({name: n, sub: s, status: 'pending'});
-        save();
-        render();
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify({ type: "REGISTER", name: n, email: e, user: u, pass: p })
+            })
+            .then(() => {
+                alert("Account Created! Pwede ka na mag-login.");
+                toggleAuth('login');
+            })
+            .catch(err => alert("Registration failed. Check your connection."));
+        }
 
-        // ISEND KAY ADMIN JERO (Anong task ang ginagawa nila?)
-        sendToJeroSheet({
-            type: "NEW TASK",
-            user: document.getElementById('loginUser').value, // Sino ang nag-add
-            task: n + " (" + s + ")"
-        });
-    }
-}
         // BACKGROUND ANIM
         const bg = document.getElementById('bgCanvas'); const ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
@@ -233,9 +198,8 @@ function addTask() {
         function drawBg(){ ctxB.clearRect(0,0,bg.width,bg.height); ctxB.fillStyle="rgba(0,242,255,0.15)"; pts.forEach(p=>{p.y-=0.5; if(p.y<0)p.y=bg.height; ctxB.beginPath(); ctxB.arc(p.x,p.y,p.s,0,Math.PI*2); ctxB.fill();}); requestAnimationFrame(drawBg); }
         drawBg();
 
-        // AUTH & TABS
-        function toggleAuth(m){ ['loginForm','registerForm','resetForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
-        function startSystem(){ if(!document.getElementById('loginUser').value) return; document.getElementById('authSection').style.display='none'; document.getElementById('dashboard').style.display='flex'; setTimeout(()=>document.getElementById('dashboard').style.opacity='1',50); }
+        // TABS & UI
+        function toggleAuth(m){ ['loginForm','registerForm'].forEach(f=>document.getElementById(f).classList.add('hidden')); document.getElementById(m+'Form').classList.remove('hidden'); }
         function tab(t){ ['missionsTab','doneTab','birdTab'].forEach(id=>document.getElementById(id).classList.add('hidden')); ['navMissions','navDone','navBird'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById(t+'Tab').classList.remove('hidden'); document.getElementById('nav'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active'); if(t==='bird')initBird(); else bActive=false; }
 
         // PLANNER
@@ -245,6 +209,8 @@ function addTask() {
             if(!n||!s) return;
             tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
             render();
+            // Optional: Send task to sheet
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: document.getElementById('loginUser').value, task: n }) });
         }
         function render(){
             const l=document.getElementById('taskList'), c=document.getElementById('completedList'); l.innerHTML=""; c.innerHTML="";
@@ -258,7 +224,7 @@ function addTask() {
             });
         }
 
-        // FLAPPY BIRD
+        // FLAPPY BIRD (MINI GAME)
         const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
         let bird, pipes, bScore, bActive=false;
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
@@ -280,6 +246,4 @@ function addTask() {
         }
     </script>
 </body>
-
 </html>
-
