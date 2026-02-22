@@ -13,7 +13,7 @@
         
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* AUTH SECTION - SAME AS BEFORE */
+        /* AUTH SECTION */
         .auth-container { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; z-index: 9999; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .logo-container { width: 90px; height: 90px; margin-bottom: 15px; border: 2px solid var(--primary); border-radius: 22px; overflow: hidden; background: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
         .logo-container img { width: 100%; height: 100%; object-fit: cover; }
@@ -21,7 +21,7 @@
         /* MAIN DASHBOARD */
         .app-container { position: relative; width: 100%; height: 100%; display: none; }
 
-        /* BOTTOM DOCK NAVIGATION */
+        /* NAVIGATION DOCK */
         .bottom-nav {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 400px; height: 65px;
@@ -32,12 +32,11 @@
         }
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #6a7282; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .nav-btn.active { color: var(--primary); }
-        .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
 
-        /* PANEL SYSTEM (MODERN SLIDE) */
+        /* PANEL SYSTEM */
         .panel { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            padding: 30px 20px 100px; /* Space for dock */
+            padding: 30px 20px 100px; 
             overflow-y: auto; transition: 0.4s ease; transform: translateX(100%); opacity: 0; 
         }
         .panel.active { transform: translateX(0); opacity: 1; }
@@ -45,10 +44,11 @@
         /* UI ELEMENTS */
         input { width: 100%; padding: 15px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; color: white; outline: none; font-size: 16px; }
         .flex-row { display: flex; gap: 10px; }
+        .flex-row input { flex: 1; }
         .btn-style { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 18px; border: none; cursor: pointer; color: white; font-weight: 800; font-size: 1rem; }
         .task-card { background: var(--glass); padding: 18px; border-radius: 20px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
-        #birdCanvas { width: 100%; background: #000; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #birdCanvas { width: 100%; max-width: 320px; background: #000; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -63,7 +63,7 @@
             <input type="text" id="loginUser" placeholder="Username">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
-            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem;" onclick="toggleAuth('register')">Register Account</span></div>
+            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem; cursor:pointer;" onclick="toggleAuth('register')">No account? Register</span></div>
         </div>
 
         <div id="registerForm" class="hidden">
@@ -72,12 +72,11 @@
             <input type="text" id="regUser" placeholder="Username">
             <input type="password" id="regPass" placeholder="Password">
             <button class="btn-style" onclick="register()">CREATE ACCOUNT</button>
-            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem;" onclick="toggleAuth('login')">Back to Login</span></div>
+            <div style="margin-top: 15px;"><span style="color:var(--primary); font-size: 0.8rem; cursor:pointer;" onclick="toggleAuth('login')">Back to Login</span></div>
         </div>
     </div>
 
     <div class="app-container" id="dashboard">
-        
         <div id="missionsTab" class="panel active">
             <h2 style="color: var(--primary); font-weight: 900; font-size: 2rem;">Missions</h2>
             <div style="background: var(--glass); padding: 25px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 25px;">
@@ -108,34 +107,22 @@
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-btn active" id="btnMissions" onclick="switchTab('missions')">
-                <span>📋</span>
-                <div>Planner</div>
-            </div>
-            <div class="nav-btn" id="btnDone" onclick="switchTab('done')">
-                <span>✅</span>
-                <div>Done</div>
-            </div>
-            <div class="nav-btn" id="btnBird" onclick="switchTab('bird')">
-                <span>🐦</span>
-                <div>Game</div>
-            </div>
+            <div class="nav-btn active" id="btnMissions" onclick="switchTab('missions')">📋 Planner</div>
+            <div class="nav-btn" id="btnDone" onclick="switchTab('done')">✅ Done</div>
+            <div class="nav-btn" id="btnBird" onclick="switchTab('bird')">🐦 Game</div>
         </div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyDVCuoE5uOFiHUITez_7B0jQDNHBvW7jbC4rr12C66Yb1qvOhPkos3PF4HLtWRv_Ti/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxLpO5ETh_09bVZH73oLk1MF7vGhbM4Zcqn77fS0mO0tnBQxV42tCjGboSFR8cKG2jw/exec';
         let tasks = [];
+        let currentUser = "";
 
         function switchTab(t) {
-            // Panels
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.getElementById(t + 'Tab').classList.add('active');
-            
-            // Buttons
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
-            
             if(t === 'bird') initBird(); else bActive = false;
         }
 
@@ -145,6 +132,7 @@
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u, pass: p }) })
             .then(res => res.json()).then(data => {
                 if (data.result === "success") {
+                    currentUser = u;
                     document.getElementById('authSection').style.opacity = '0';
                     setTimeout(() => {
                         document.getElementById('authSection').style.display = 'none';
@@ -155,8 +143,12 @@
         }
 
         function register() {
-            const u = document.getElementById('regUser').value, e = document.getElementById('regEmail').value, p = document.getElementById('regPass').value;
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "REGISTER", user: u, email: e, pass: p }) })
+            const u = document.getElementById('regUser').value, 
+                  e = document.getElementById('regEmail').value, 
+                  p = document.getElementById('regPass').value,
+                  n = document.getElementById('regName').value;
+            if(!u || !e || !p) return;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "REGISTER", name: n, user: u, email: e, pass: p }) })
             .then(() => { alert("Account Created!"); toggleAuth('login'); });
         }
 
@@ -169,6 +161,10 @@
             const n = document.getElementById('tName').value, s = document.getElementById('tSub').value, 
                   d = document.getElementById('tDate').value, t = document.getElementById('tTime').value;
             if(!n || !s) return;
+            
+            const taskStr = `${n} (${s}) - Due: ${d} ${t}`;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: currentUser, task: taskStr }) });
+            
             tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
             render();
             document.getElementById('tName').value = ""; document.getElementById('tSub').value = "";
@@ -201,7 +197,10 @@
             pipes.forEach(p=>{
                 p.x-=2; bCtx.fillStyle="rgba(0,242,255,0.2)"; bCtx.fillRect(p.x,0,40,p.top); bCtx.fillRect(p.x,p.top+120,40,400);
                 if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
-                if(bird.y>400||bird.y<0||(bird.x+20>p.x && bird.x<p.x+40 && (bird.y<p.top||bird.y>p.top+100))) bActive=false;
+                if(bird.y>400||bird.y<0||(bird.x+20>p.x && bird.x<p.x+40 && (bird.y<p.top||bird.y>p.top+100))) {
+                    bActive=false;
+                    fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "SCORE", user: currentUser, score: bScore }) });
+                }
             });
             if(bActive) requestAnimationFrame(bLoop);
         }
