@@ -15,7 +15,19 @@
 
         /* AUTH SECTION */
         .auth-container { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; z-index: 9999; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .logo-container { width: 90px; height: 90px; margin-bottom: 15px; border: 2px solid var(--primary); border-radius: 22px; overflow: hidden; background: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
+        
+        /* LOGO ANIMATION FIXED */
+        .logo-container { 
+            width: 95px; height: 95px; margin-bottom: 15px; 
+            border: 2px solid var(--primary); border-radius: 22px; 
+            overflow: hidden; background: #000; 
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+            animation: floatLogo 3s ease-in-out infinite;
+        }
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
         .logo-container img { width: 100%; height: 100%; object-fit: cover; }
 
         /* MAIN DASHBOARD */
@@ -33,7 +45,7 @@
         input { width: 100%; padding: 15px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; color: white; outline: none; font-size: 16px; }
         .flex-row { display: flex; gap: 10px; }
         .flex-row input { flex: 1; }
-        .btn-style { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 18px; border: none; cursor: pointer; color: white; font-weight: 800; font-size: 1rem; }
+        .btn-style { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 18px; border: none; cursor: pointer; color: white; font-weight: 800; font-size: 1rem; box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2); }
         .task-card { background: var(--glass); padding: 18px; border-radius: 20px; border: 1px solid var(--border); border-left: 6px solid var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
 
@@ -46,10 +58,11 @@
             display: flex; justify-content: space-around; align-items: center;
             z-index: 1000;
         }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #6a7282; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
-        .nav-btn.active { color: var(--primary); }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #6a7282; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .nav-btn.active { color: var(--primary); transform: translateY(-5px); }
+        .nav-btn span { font-size: 1.2rem; margin-bottom: 2px; }
         
-        #birdCanvas { width: 100%; max-width: 320px; background: #000; border-radius: 20px; margin: 0 auto; display: block; }
+        #birdCanvas { width: 100%; max-width: 320px; background: #000; border-radius: 20px; margin: 0 auto; display: block; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -79,7 +92,7 @@
 
     <div class="app-container" id="dashboard">
         <div id="missionsTab" class="panel active">
-            <h2 style="color: var(--primary); font-weight: 900; font-size: 2rem;">Missions</h2>
+            <h2 style="color: var(--primary); font-weight: 900; font-size: 2rem; margin-bottom: 10px;">Missions</h2>
             <div style="background: var(--glass); padding: 20px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 25px;">
                 <input type="text" id="tName" placeholder="Mission Name">
                 <input type="text" id="tSub" placeholder="Subject">
@@ -90,16 +103,16 @@
                 <button class="btn-style" onclick="addTask()">ADD TO PLANNER</button>
             </div>
             <div id="taskList"></div>
-            <button class="btn-style" style="background: #1a1a2e; color: var(--error); margin-top: 40px;" onclick="location.reload()">SIGN OUT</button>
+            <button class="btn-style" style="background: #1a1a2e; color: var(--error); border: 1px solid var(--error); margin-top: 40px; margin-bottom: 100px;" onclick="location.reload()">SIGN OUT</button>
         </div>
 
         <div id="doneTab" class="panel">
-            <h2 style="color: var(--primary); font-weight: 900;">Finished</h2>
+            <h2 style="color: var(--primary); font-weight: 900; font-size: 2rem;">Finished</h2>
             <div id="completedList"></div>
         </div>
 
         <div id="birdTab" class="panel">
-            <h2 style="color: var(--secondary); font-weight: 900;">Mini Game</h2>
+            <h2 style="color: var(--secondary); font-weight: 900; font-size: 2rem;">Mini Game</h2>
             <div style="text-align: center;">
                 <canvas id="birdCanvas" width="320" height="400"></canvas>
                 <h3 id="birdScore" style="font-size: 1.5rem; margin: 15px 0;">Score: 0</h3>
@@ -115,7 +128,6 @@
     </div>
 
     <script>
-        // PASTE YOUR NEW DEPLOYMENT URL HERE
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw_t5TWsbE9GDqMKSV4ub4sT5uhK_2wc7FwYZhVeQaCPfrpkSWknjUbOXtVuAmPtbub/exec';
         
         let tasks = [];
@@ -151,10 +163,8 @@
         }
 
         function register() {
-            const n = document.getElementById('regName').value,
-                  e = document.getElementById('regEmail').value,
-                  u = document.getElementById('regUser').value,
-                  p = document.getElementById('regPass').value;
+            const n = document.getElementById('regName').value, e = document.getElementById('regEmail').value,
+                  u = document.getElementById('regUser').value, p = document.getElementById('regPass').value;
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "REGISTER", name: n, email: e, user: u, pass: p }) })
             .then(() => { alert("Account Created!"); toggleAuth('login'); });
         }
@@ -166,9 +176,8 @@
             
             const taskStr = `${n} (${s}) - Due: ${d} ${t}`;
             
-            // Send to Sheets
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "TASK", user: currentUser, task: taskStr }) })
-            .then(() => console.log("Task Saved to Sheet"));
+            // FIXED: Send Task with current user
+            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: "TASK", user: currentUser, task: taskStr }) });
 
             tasks.push({id:Date.now(), name:n, sub:s, date:d, time:t, status:'pending'});
             render();
@@ -190,7 +199,7 @@
             });
         }
 
-        // BIRD GAME
+        // BIRD GAME FIXED
         const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
         let bird, pipes, bScore, bActive=false;
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
@@ -204,14 +213,14 @@
                 if(p.x===50){ bScore++; document.getElementById('birdScore').innerText="Score: "+bScore; }
                 if(bird.y>400||bird.y<0||(bird.x+20>p.x && bird.x<p.x+40 && (bird.y<p.top||bird.y>p.top+100))) {
                     bActive=false;
-                    fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "SCORE", user: currentUser, score: bScore }) });
+                    fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: "SCORE", user: currentUser, score: bScore }) });
                 }
             });
             if(bActive) requestAnimationFrame(bLoop);
         }
         bCvs.addEventListener('touchstart', (e)=>{ e.preventDefault(); bird.v=-5; });
 
-        // Background
+        // BACKGROUND ANIMATION
         const bg = document.getElementById('bgCanvas'), ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
         let pts = Array(40).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
