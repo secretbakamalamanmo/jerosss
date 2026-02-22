@@ -8,96 +8,57 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
         :root { 
-            --primary: #00f2ff; 
-            --secondary: #ff00d4; 
-            --bg: #0b101b; 
-            --glass: rgba(255, 255, 255, 0.05); 
-            --border: rgba(255, 255, 255, 0.1); 
-            --error: #ff4757; 
+            --primary: #00f2ff; --secondary: #ff00d4; --bg: #0b101b; 
+            --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); --error: #ff4757; 
         }
 
-        /* ANDROID NATIVE FEEL FIXES */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-            touch-action: manipulation;
-        }
-
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background-color: var(--bg); font-family: 'Inter', sans-serif; 
-            color: white; overflow: hidden; position: fixed;
-        }
-
+        /* ANDROID FIX */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; touch-action: manipulation; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); font-family: 'Inter', sans-serif; color: white; overflow: hidden; position: fixed; }
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
+        /* LOGO ANIMATION */
+        .logo-container { width: 80px; height: 80px; margin: 0 auto 10px; border: 2px solid var(--primary); border-radius: 20px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; animation: float 3s ease-in-out infinite; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
+        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
         /* AUTH SECTION */
-        .auth-container { 
-            position: fixed; inset: 0; background: var(--bg); 
-            z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 40px; 
-            text-align: center; transition: 0.5s;
-        }
+        .auth-container { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ily-text { font-size: 0.9rem; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); font-weight: bold; margin-bottom: 20px; display: block; }
 
         /* SLIDING PANELS SYSTEM */
         .panel {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg);
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 30px 20px;
-            padding-left: 50px; /* Space para sa clickable handles */
-            border-left: 1px solid var(--border);
-            overflow-y: auto;
+            position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+            background: var(--bg); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px; border-left: 1px solid var(--border); overflow-y: auto;
         }
 
-        /* Default Positions */
+        /* Positions - Stacked with Silip Handles */
         #missionsTab { z-index: 10; transform: translateX(0); padding-left: 20px; }
-        #doneTab { z-index: 20; transform: translateX(calc(100% - 40px)); }
-        #gameTab { z-index: 30; transform: translateX(calc(100% - 20px)); }
+        #doneTab { z-index: 20; transform: translateX(calc(100% - 80px)); padding-left: 80px; }
+        #gameTab { z-index: 30; transform: translateX(calc(100% - 40px)); padding-left: 60px; }
 
-        /* Active States */
-        .panel.active { transform: translateX(0) !important; }
+        .panel.active { transform: translateX(0) !important; padding-left: 50px !important; }
+        #missionsTab.active { padding-left: 20px !important; }
 
-        /* Side Handles (Yung sinasabi mong clickable kahit nakahide) */
+        /* HANDLES */
         .handle {
-            position: absolute;
-            left: 0; top: 0;
-            width: 45px; height: 100%;
+            position: absolute; left: 0; top: 0; width: 45px; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            font-size: 0.8rem; font-weight: 900;
-            letter-spacing: 2px; text-transform: uppercase;
-            cursor: pointer;
-            border-right: 1px solid var(--border);
+            writing-mode: vertical-rl; text-orientation: mixed;
+            font-size: 0.75rem; font-weight: 900; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer; border-right: 1px solid var(--border);
         }
         #doneTab .handle { background: linear-gradient(to bottom, #1a1a2e, var(--primary)); color: #000; }
         #gameTab .handle { background: linear-gradient(to bottom, #1a1a2e, var(--secondary)); color: #000; }
 
         /* UI ELEMENTS */
         .card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
-        input { 
-            width: 100%; padding: 15px; margin-bottom: 10px; 
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border); 
-            border-radius: 12px; color: white; outline: none; font-size: 16px;
-        }
-        .btn-style { 
-            width: 100%; padding: 15px; background: linear-gradient(90deg, var(--primary), var(--secondary)); 
-            border-radius: 15px; border: none; cursor: pointer; color: white; font-weight: 800; 
-        }
-        .task-card { 
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
-            border-left: 5px solid var(--primary); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        
-        #birdCanvas { width: 100%; max-width: 350px; background: #000; border-radius: 15px; }
+        input { width: 100%; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; font-size: 16px; }
+        .btn-style { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 15px; border: none; cursor: pointer; color: white; font-weight: 800; }
+        .task-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .hidden { display: none !important; }
+        .auth-link { color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 15px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -105,16 +66,26 @@
     <canvas id="bgCanvas"></canvas>
 
     <div class="auth-container" id="authSection">
+        <div class="logo-container"><img src="rocket.jpg" alt="Logo" onerror="this.src='https://via.placeholder.com/100?text=LOGO'"></div>
         <h1 style="color: var(--primary); margin: 0;">School ni Jero</h1>
-        <p style="color: var(--secondary); font-weight: bold;">ily mj</p>
+        <span class="ily-text">ily mj</span>
+        
         <div id="loginForm">
             <input type="text" id="loginUser" placeholder="Username">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-style" onclick="startSystem()">LOGIN SYSTEM</button>
+            <span class="auth-link" onclick="toggleAuth('reg')">Need an Account? Register</span>
+        </div>
+
+        <div id="regForm" class="hidden">
+            <input type="text" id="regUser" placeholder="New Username">
+            <input type="password" id="regPass" placeholder="New Password">
+            <button class="btn-style" onclick="register()">CREATE ACCOUNT</button>
+            <span class="auth-link" onclick="toggleAuth('login')">Back to Login</span>
         </div>
     </div>
 
-    <div id="missionsTab" class="panel">
+    <div id="missionsTab" class="panel active">
         <h2 style="color: var(--primary)">Missions</h2>
         <div class="card">
             <input type="text" id="tName" placeholder="Task Name">
@@ -127,7 +98,7 @@
 
     <div id="doneTab" class="panel">
         <div class="handle" onclick="openPanel('doneTab')">COMPLETED ✅</div>
-        <h2 style="color: var(--primary)">Finished</h2>
+        <h2 style="color: var(--primary)">Finished Missions</h2>
         <div id="completedList"></div>
     </div>
 
@@ -145,35 +116,43 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyDVCuoE5uOFiHUITez_7B0jQDNHBvW7jbC4rr12C66Yb1qvOhPkos3PF4HLtWRv_Ti/exec';
         let tasks = [];
 
-        // PANEL NAVIGATION
+        function toggleAuth(mode) {
+            document.getElementById('loginForm').classList.toggle('hidden', mode === 'reg');
+            document.getElementById('regForm').classList.toggle('hidden', mode === 'login');
+        }
+
         function openPanel(id) {
             if (id === 'doneTab') {
-                document.getElementById('doneTab').classList.toggle('active');
+                document.getElementById('doneTab').classList.add('active');
                 document.getElementById('gameTab').classList.remove('active');
             } else if (id === 'gameTab') {
-                document.getElementById('gameTab').classList.toggle('active');
-                if(document.getElementById('gameTab').classList.contains('active')) initBird();
-                else bActive = false;
+                document.getElementById('gameTab').classList.add('active');
+                initBird();
             }
         }
 
-        // Click Planner to close others
-        document.getElementById('missionsTab').addEventListener('click', () => {
+        document.getElementById('missionsTab').addEventListener('click', (e) => {
+            if(e.target.closest('.handle')) return;
             document.getElementById('doneTab').classList.remove('active');
             document.getElementById('gameTab').classList.remove('active');
             bActive = false;
         });
 
         function startSystem() {
-            const u = document.getElementById('loginUser').value;
-            const p = document.getElementById('loginPass').value;
+            const u = document.getElementById('loginUser').value, p = document.getElementById('loginPass').value;
             if(!u || !p) return;
             fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "LOGIN", user: u, pass: p }) })
             .then(res => res.json()).then(data => {
-                if (data.result === "success") {
-                    document.getElementById('authSection').style.transform = 'translateY(-100%)';
-                } else alert("Mali account mo!");
+                if (data.result === "success") document.getElementById('authSection').style.transform = 'translateY(-100%)';
+                else alert("Mali account!");
             });
+        }
+
+        function register() {
+            const u = document.getElementById('regUser').value, p = document.getElementById('regPass').value;
+            if(!u || !p) return;
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify({ type: "REGISTER", user: u, pass: p }) })
+            .then(() => { alert("Account Created!"); toggleAuth('login'); });
         }
 
         function addTask() {
@@ -203,7 +182,6 @@
         // BIRD GAME
         const bCvs=document.getElementById('birdCanvas'), bCtx=bCvs.getContext('2d');
         let bird, pipes, bScore, bActive=false;
-
         function initBird(){ bird={x:50,y:200,v:0,g:0.25}; pipes=[]; bScore=0; bActive=true; bLoop(); }
         function bLoop(){
             if(!bActive) return;
@@ -225,7 +203,7 @@
         }
         bCvs.addEventListener('touchstart', (e)=>{ e.preventDefault(); bird.v=-5; });
 
-        // Background
+        // BG Animation
         const bg = document.getElementById('bgCanvas'), ctxB = bg.getContext('2d');
         function res(){ bg.width=window.innerWidth; bg.height=window.innerHeight; } res();
         let pts = Array(50).fill().map(()=>({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*2}));
